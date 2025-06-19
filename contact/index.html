@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Support - Abacromby9 Studios</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Contact Support</h1>
+        <nav>
+            <a href="../">Home</a> |
+            <a href="../rules/">Rules</a> |
+            <a href="../discord/">Discord</a> |
+            <a href="../terms/">Terms</a> |
+            <a href="../privacy/">Privacy</a>
+        </nav>
+    </header>
+
+    <main>
+        <form id="supportForm" action="process_form.php" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="email">Your Email Address:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Minecraft Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="subject">Support Subject:</label>
+                <select id="subject" name="subject" required onchange="showRelevantFields()">
+                    <option value="">-- Select a subject --</option>
+                    <option value="player_report">Player Report</option>
+                    <option value="general_support">General Support</option>
+                    <option value="legal_inquiry">Legal Inquiry</option>
+                    <option value="appeal_request">Appeal Request</option>
+                </select>
+            </div>
+
+            <!-- Player Report Fields (hidden by default) -->
+            <div id="playerReportFields" class="subject-fields" style="display:none;">
+                <div class="form-group">
+                    <label for="violation_evidence">Upload Evidence (MP4 or other video format):</label>
+                    <input type="file" id="violation_evidence" name="violation_evidence" accept="video/*">
+                </div>
+                <div class="form-group">
+                    <label for="broken_rule">Which rule was broken?</label>
+                    <textarea id="broken_rule" name="broken_rule" rows="3"></textarea>
+                </div>
+            </div>
+
+            <!-- General Support Fields (hidden by default) -->
+            <div id="generalSupportFields" class="subject-fields" style="display:none;">
+                <div class="form-group">
+                    <label for="general_subject">Subject:</label>
+                    <input type="text" id="general_subject" name="general_subject">
+                </div>
+                <div class="form-group">
+                    <label for="general_description">Description:</label>
+                    <textarea id="general_description" name="general_description" rows="5"></textarea>
+                </div>
+            </div>
+
+            <!-- Legal Inquiry Fields (hidden by default) -->
+            <div id="legalInquiryFields" class="subject-fields" style="display:none;">
+                <div class="form-group">
+                    <label for="legal_subject">Subject:</label>
+                    <input type="text" id="legal_subject" name="legal_subject">
+                </div>
+                <div class="form-group">
+                    <label for="legal_description">Description:</label>
+                    <textarea id="legal_description" name="legal_description" rows="5"></textarea>
+                </div>
+            </div>
+
+            <!-- Appeal Request Fields (hidden by default) -->
+            <div id="appealRequestFields" class="subject-fields" style="display:none;">
+                <div class="form-group">
+                    <label for="enforcement_action">Enforcement Action You're Appealing:</label>
+                    <input type="text" id="enforcement_action" name="enforcement_action">
+                </div>
+                <div class="form-group">
+                    <label for="enforcement_reason">Reason Given for Action:</label>
+                    <textarea id="enforcement_reason" name="enforcement_reason" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="appeal_reason">Why should this be lifted?</label>
+                    <textarea id="appeal_reason" name="appeal_reason" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="appeal_notes">Additional Notes:</label>
+                    <textarea id="appeal_notes" name="appeal_notes" rows="3"></textarea>
+                </div>
+            </div>
+
+            <button type="submit">Submit Request</button>
+        </form>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Abacromby9 Studios. All rights reserved worldwide.</p>
+    </footer>
+
+    <script src="../js/scripts.js"></script>
+</body>
+</html>
