@@ -1,98 +1,181 @@
-<!-- /rules/index.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Server Rules - abacromby9-studios</title>
+    <title>Server Rules - True-Fort SMP</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .rules-category {
+            position: relative;
+            padding-left: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .rules-category::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--accent);
+            border-radius: 4px;
+        }
+        .rules-category h2 {
+            margin-top: 0;
+            color: var(--primary);
+        }
+        .rules-category ol {
+            padding-left: 1.5rem;
+        }
+        .rules-category li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .rules-category li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        .rule-severity {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin-left: 0.5rem;
+        }
+        .severity-high {
+            background-color: rgba(244, 67, 54, 0.1);
+            color: #F44336;
+        }
+        .severity-medium {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #FFC107;
+        }
+        .intro {
+            margin-bottom: 2rem;
+        }
+        .last-updated {
+            color: #666;
+            font-style: italic;
+        }
+        .notice {
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+        .notice.warning {
+            background-color: rgba(255, 193, 7, 0.2);
+            border-left: 4px solid #FFC107;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Server Rules & Regulations</h1>
-    </header>
- <header>
-        <nav>
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
-        </nav>
+        <div class="header-content">
+            <h1><i class="fas fa-cubes"></i> True-Fort SMP</h1>
+            <nav>
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/rules/"><i class="fas fa-gavel"></i> Rules</a>
+                <a href="/contact/"><i class="fas fa-headset"></i> Support</a>
+                <a href="/discord/"><i class="fab fa-discord"></i> Discord</a>
+                <a href="/privacy/"><i class="fas fa-lock"></i> Privacy</a>
+            </nav>
+        </div>
     </header>
 
     <main>
+        <section class="intro">
+            <h1><i class="fas fa-gavel"></i> Server Rules & Regulations</h1>
+            <p class="last-updated">Last Updated: June 20, 2025</p>
+            <div class="notice warning">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Violations may result in temporary or permanent bans.</strong> All rules apply to both in-game and Discord server.
+            </div>
+        </section>
+
         <section class="rules-category">
-            <h2>General Rules</h2>
+            <h2><i class="fas fa-users"></i> General Rules</h2>
             <ol>
-                <li>Respect all players and Policy Enforcement Team members. Harassment or discrimination will not be tolerated.</li>
-                <li>No cheating, hacking, or exploiting game mechanics.</li>
-                <li>Do not share or use another player's account.</li>
-                <li>No advertising other servers, services, or social media accounts without prior permission from the Management Team</li>
-                <li>Keep chat appropriate for all ages. No NSFW content.</li>
-                <li>Do not impersonate Policy Enforcement Team members, Developers, Management Members, or other players. Developers, P.E.T members, and Management Team members will have a special nametag above their head</li>
-                <li>No spamming in chat/chat walling/flooding chat.</li>
-                <li>Do not attempt to crash or lag the server.</li>
-                <li>Follow instructions and decisions from Policy Enforcement Team members and mebers of the Management Team.</li>
-                <li>Any behavior that harms the community may result in punishment.</li>
-               <li>Do not attempt to DDoS, DoS, Stress Test, "Boot" players, Policy Enforcement Team Members, Developers, or Management Team Members</li>
-               <li>No racism, discrimination, hommophobia, transphobia, xenophobia, furryphobia, sexism, or other forms of harassment or language intended to insult, hurt, offend, or demean a user of the internet or a member of True-Fort Surival Minecraft Multiplayer and Factions</li>
+                <li>Respect all players and staff members. Harassment or discrimination will not be tolerated. <span class="rule-severity severity-high">Zero Tolerance</span></li>
+                <li>No cheating, hacking, or exploiting game mechanics. <span class="rule-severity severity-high">Permanent Ban</span></li>
+                <li>Do not share or use another player's account. <span class="rule-severity severity-medium">30-day Ban</span></li>
+                <li>No advertising other servers, services, or social media accounts without prior permission. <span class="rule-severity severity-medium">7-day Ban</span></li>
+                <li>Keep chat appropriate for all ages. No NSFW content. <span class="rule-severity severity-high">Permanent Ban</span></li>
+                <li>Do not impersonate staff members or other players. <span class="rule-severity severity-medium">14-day Ban</span></li>
+                <li>No spamming in chat/chat walling/flooding chat. <span class="rule-severity severity-medium">1-day Mute</span></li>
+                <li>Do not attempt to crash or lag the server. <span class="rule-severity severity-high">Permanent Ban</span></li>
+                <li>Follow instructions and decisions from staff members. <span class="rule-severity severity-medium">Varies</span></li>
+                <li>Any behavior that harms the community may result in punishment. <span class="rule-severity severity-medium">Varies</span></li>
+                <li>Do not attempt to DDoS, DoS, or stress test the server. <span class="rule-severity severity-high">Permanent Ban + Report</span></li>
+                <li>No racism, discrimination, homophobia, transphobia, xenophobia, furryphobia, or sexism. <span class="rule-severity severity-high">Permanent Ban</span></li>
             </ol>
         </section>
 
         <section class="rules-category">
-            <h2>PVP Rules</h2>
+            <h2><i class="fas fa-crosshairs"></i> PVP Rules</h2>
             <ol>
-                <li>PVP is disabled in spawns world</li>
-                <li>No spawn killing or camping.</li>
-                <li>Combat logging (leaving to avoid PVP) is strictly prohibited.</li>
-                <li>No using alternative accounts to gain PVP advantages.</li>
-                <li>No exploiting PVP mechanics or hitboxes.</li>
-                <li>PVP-related glitches must be reported, not exploited.</li>
-                <li>Excessive toxicity is not permitted</li>
-                <li>No exploiting known or unknown bugs or glitches with the server or minecraft as a whole.</li>
+                <li>PVP is disabled in spawn world. <span class="rule-severity severity-medium">7-day Ban</span></li>
+                <li>No spawn killing or camping. <span class="rule-severity severity-medium">3-day Ban</span></li>
+                <li>Combat logging (leaving to avoid PVP) is strictly prohibited. <span class="rule-severity severity-medium">7-day Ban</span></li>
+                <li>No using alternative accounts to gain PVP advantages. <span class="rule-severity severity-high">30-day Ban</span></li>
+                <li>No exploiting PVP mechanics or hitboxes. <span class="rule-severity severity-medium">14-day Ban</span></li>
+                <li>PVP-related glitches must be reported, not exploited. <span class="rule-severity severity-medium">7-day Ban</span></li>
+                <li>Excessive toxicity is not permitted. <span class="rule-severity severity-medium">1-day Mute</span></li>
+                <li>No exploiting known or unknown bugs or glitches. <span class="rule-severity severity-high">30-day Ban</span></li>
             </ol>
         </section>
 
         <section class="rules-category">
-            <h2>Building Rules</h2>
+            <h2><i class="fas fa-hammer"></i> Building Rules</h2>
             <ol>
-                <li>No offensive or inappropriate builds.</li>
-                <li>Do not build within 100 blocks of another player's base without permission.</li>
-                <li>No floating trees or excessive pillar builds.</li>
-                <li>builds must not be excessive on the server infrastructure or network.</li>
-                <li>No inappropriate redstone builds</li>
+                <li>No offensive or inappropriate builds. <span class="rule-severity severity-high">Permanent Ban</span></li>
+                <li>Do not build within 100 blocks of another player's base without permission. <span class="rule-severity severity-medium">Warning</span></li>
+                <li>No floating trees or excessive pillar builds. <span class="rule-severity severity-medium">Warning</span></li>
+                <li>Builds must not strain server performance. <span class="rule-severity severity-medium">Removal</span></li>
+                <li>No inappropriate redstone builds. <span class="rule-severity severity-medium">Removal</span></li>
             </ol>
         </section>
 
         <section class="rules-category">
-            <h2>Communication Rules</h2>
+            <h2><i class="fas fa-comments"></i> Communication Rules</h2>
             <ol>
-                <li>English is the primary language for public chats.</li>
-                <li>No excessive caps or meaningless spam.</li>
-                <li>Keep political and religious discussions out of public chats.</li>
-                <li>Do not share personal information (yours or others').</li>
-                <li>No discussion of illegal activities.</li>
-                <li>Voice chat must remain appropriate for all ages.</li>
-                <li>Respect all players regardless of skill level.</li>
-                <li>No backseat moderating or mini-modding - report issues to staff.</li>
-                <li>Do not argue with staff decisions in public chats.</li>
-                <li>No racism, homophobia, transphobia, xenophobia, sexism, furryphobia in public chats</li>
+                <li>English is the primary language for public chats. <span class="rule-severity severity-medium">Warning</span></li>
+                <li>No excessive caps or meaningless spam. <span class="rule-severity severity-medium">1-hour Mute</span></li>
+                <li>Keep political and religious discussions out of public chats. <span class="rule-severity severity-medium">1-day Mute</span></li>
+                <li>Do not share personal information (yours or others'). <span class="rule-severity severity-high">14-day Ban</span></li>
+                <li>No discussion of illegal activities. <span class="rule-severity severity-high">Permanent Ban</span></li>
+                <li>Voice chat must remain appropriate for all ages. <span class="rule-severity severity-high">Permanent Ban</span></li>
+                <li>Respect all players regardless of skill level. <span class="rule-severity severity-medium">Warning</span></li>
+                <li>No backseat moderating - report issues to staff. <span class="rule-severity severity-medium">1-hour Mute</span></li>
+                <li>Do not argue with staff decisions in public chats. <span class="rule-severity severity-medium">1-day Mute</span></li>
+                <li>No hate speech of any kind in public chats. <span class="rule-severity severity-high">Permanent Ban</span></li>
             </ol>
         </section>
     </main>
 
- <footer>
-        <p>Last Revised: 06/20/2025 at 1:28 AM EDT</p>
-        <p>Created: 06/19/2025 at 5:45 PM EDT</p>
-        <p>Effective: 06/20/2025 at 1:28 AM EDT</p>
-        <p>&copy; 2025 True-Fort Survival Multiplayer And Factions, And Abacromby9 Studios. All rights reserved worldwide. Not affiliated with Mojang AB or Microsoft Corporation.</p>
-        <div style="margin-top: 1rem;">
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3><i class="fas fa-cubes"></i> True-Fort SMP</h3>
+                <p>The ultimate Minecraft survival experience</p>
+            </div>
+            <div class="footer-links">
+                <a href="/terms/index.html"><i class="fas fa-file-contract"></i> Terms</a>
+                <a href="/privacy/index.html"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="/contact/index.html"><i class="fas fa-headset"></i> Contact</a>
+                <a href="/discord/index.html"><i class="fab fa-discord"></i> Discord</a>
+            </div>
+            <div class="footer-legal">
+                <p>&copy; 2025 True-Fort Survival Multiplayer And Factions. All rights reserved.</p>
+                <p>Not affiliated with Mojang AB or Microsoft Corporation.</p>
+            </div>
         </div>
     </footer>
 </body>
