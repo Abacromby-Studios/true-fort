@@ -2,7 +2,7 @@
   "name": "true-fort-website",
   "version": "1.0.0",
   "dependencies": {
-    "resend": "^latest"
+    "resend": "^2.0.0"
   },
   "engines": {
     "node": ">=18.x"
