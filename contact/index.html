@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Support - True-Fort SMP</title>
-    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -23,7 +23,7 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
-            color: var(--primary);
+            color: #4a6fa5;
         }
         input, select, textarea {
             width: 100%;
@@ -31,53 +31,37 @@
             border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 1rem;
-            transition: border 0.3s;
-        }
-        input:focus, select:focus, textarea:focus {
-            border-color: var(--accent);
-            outline: none;
         }
         textarea {
             min-height: 120px;
         }
         #submitBtn {
-            background-color: var(--primary);
+            background-color: #4a6fa5;
             color: white;
             padding: 1rem 2rem;
             border: none;
             border-radius: 4px;
             font-size: 1.1rem;
             cursor: pointer;
-            transition: all 0.3s;
             display: block;
             margin: 2rem auto 0;
         }
-        #submitBtn:hover {
-            background-color: var(--dark);
-            transform: translateY(-2px);
-        }
-        #submitBtn:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-            transform: none;
-        }
         .subject-fields {
+            display: none;
             margin-top: 1.5rem;
             padding: 1.5rem;
             background-color: rgba(74, 111, 165, 0.05);
             border-radius: 6px;
-            border-left: 4px solid var(--accent);
+            border-left: 4px solid #4fc3f7;
         }
         .success-message {
             text-align: center;
             padding: 2rem;
-        }
-        .success-message h3 {
-            color: var(--primary);
+            display: none;
         }
         .warning-notice {
             background-color: rgba(255, 193, 7, 0.2);
-            border-left: 4px solid var(--warning);
+            border-left: 4px solid #FFC107;
             padding: 1rem;
             margin-bottom: 2rem;
             border-radius: 4px;
@@ -90,10 +74,11 @@
             <h1><i class="fas fa-cubes"></i> True-Fort SMP</h1>
             <nav>
                 <a href="/"><i class="fas fa-home"></i> Home</a>
-                <a href="/rules/index.html"><i class="fas fa-gavel"></i> Rules</a>
-                <a href="/contact/index.html"><i class="fas fa-headset"></i> Support</a>
-                <a href="/discord/index.html"><i class="fab fa-discord"></i> Discord</a>
-                <a href="/privacy/index.html"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="/rules/index.js"><i class="fas fa-gavel"></i> Rules</a>
+                <a href="/contact/index.js"><i class="fas fa-headset"></i> Support</a>
+                <a href="/discord/index.js"><i class="fab fa-discord"></i> Discord</a>
+                <a href="/privacy/index.js"><i class="fas fa-lock"></i> Privacy</a>
+                 <a href="/terms/index.js"><i class="fas fa-gavel"></i> Terms/a>
             </nav>
         </div>
     </header>
@@ -106,16 +91,15 @@
                 <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> False reports or troll tickets will result in account suspension.
             </div>
             
-            <form id="supportForm">                <div class="form-group">
+            <form id="supportForm">
+                <div class="form-group">
                     <label for="email">Your Email Address:</label>
                     <input type="email" id="email" name="email" required>
-                    <div id="emailError" class="error hidden"></div>
                 </div>
 
                 <div class="form-group">
                     <label for="username">Minecraft Username:</label>
                     <input type="text" id="username" name="username" required>
-                    <div id="usernameError" class="error hidden"></div>
                 </div>
 
                 <div class="form-group">
@@ -127,11 +111,9 @@
                         <option value="legal_inquiry">Legal Inquiry</option>
                         <option value="appeal_request">Appeal Request</option>
                     </select>
-                    <div id="subjectError" class="error hidden"></div>
                 </div>
 
                 <!-- Player Report Fields -->
-                <!-- Dynamic Fields (initially hidden) -->
                 <div id="player_report_fields" class="subject-fields">
                     <div class="form-group">
                         <label for="broken_rule">Which rule was broken?</label>
@@ -143,25 +125,61 @@
                     </div>
                 </div>
 
+                <!-- General Support Fields -->
                 <div id="general_support_fields" class="subject-fields">
-                    <!-- General Support fields -->
+                    <div class="form-group">
+                        <label for="general_subject">Subject:</label>
+                        <input type="text" id="general_subject" name="general_subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="general_description">Description:</label>
+                        <textarea id="general_description" name="general_description" rows="5"></textarea>
+                    </div>
                 </div>
 
+                <!-- Legal Inquiry Fields -->
                 <div id="legal_inquiry_fields" class="subject-fields">
-                    <!-- Legal Inquiry fields -->
+                    <div class="form-group">
+                        <label for="legal_subject">Subject:</label>
+                        <input type="text" id="legal_subject" name="legal_subject">
+                    </div>
+                    <div class="form-group">
+                        <label for="legal_description">Description:</label>
+                        <textarea id="legal_description" name="legal_description" rows="5"></textarea>
+                    </div>
                 </div>
 
+                <!-- Appeal Request Fields -->
                 <div id="appeal_request_fields" class="subject-fields">
-                    <!-- Appeal Request fields -->
+                    <div class="form-group">
+                        <label for="enforcement_action">Enforcement Action:</label>
+                        <input type="text" id="enforcement_action" name="enforcement_action">
+                    </div>
+                    <div class="form-group">
+                        <label for="enforcement_reason">Original Reason:</label>
+                        <textarea id="enforcement_reason" name="enforcement_reason" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="appeal_reason">Why should this be lifted?</label>
+                        <textarea id="appeal_reason" name="appeal_reason" rows="5"></textarea>
+                    </div>
                 </div>
 
                 <button type="submit" id="submitBtn">
                     <i class="fas fa-paper-plane"></i> Submit Request
                 </button>
             </form>
+            
+            <div id="successMessage" class="success-message">
+                <h3><i class="fas fa-check-circle"></i> Request Submitted Successfully!</h3>
+                <p>We'll respond to your email within 24-48 hours.</p>
+                <button onclick="window.location.reload()" class="btn">
+                    <i class="fas fa-plus"></i> Submit Another Request
+                </button>
+            </div>
         </div>
     </main>
-             
+
     <footer>
         <div class="footer-content">
             <div class="footer-brand">
@@ -169,10 +187,10 @@
                 <p>The ultimate Minecraft survival experience</p>
             </div>
             <div class="footer-links">
-                <a href="/terms/index.html"><i class="fas fa-file-contract"></i> Terms</a>
-                <a href="/privacy/index.html"><i class="fas fa-lock"></i> Privacy</a>
-                <a href="/contact/index.html"><i class="fas fa-headset"></i> Contact</a>
-                <a href="/discord/index.html"><i class="fab fa-discord"></i> Discord</a>
+                <a href="/terms/index.js"><i class="fas fa-file-contract"></i> Terms</a>
+                <a href="/privacy/index.js"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="/contact/index.js"><i class="fas fa-headset"></i> Contact</a>
+                <a href="/discord/index.js"><i class="fab fa-discord"></i> Discord</a>
             </div>
             <div class="footer-legal">
                 <p>&copy; 2025 True-Fort Survival Multiplayer And Factions. All rights reserved.</p>
