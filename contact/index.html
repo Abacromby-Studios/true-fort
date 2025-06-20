@@ -124,94 +124,57 @@
         </div>
     </main>
 
-    <script>
-        // Remove required attributes from all subject fields initially
-        document.querySelectorAll('.subject-fields input, .subject-fields textarea').forEach(field => {
-            field.removeAttribute('required');
-        });
-
-        // Show/hide fields based on selected subject
-        document.getElementById('subject').addEventListener('change', function() {
-            const selectedSubject = this.value;
-            
-            // Hide all subject fields and remove their requirements
+   <script>
+        // Dynamic field handling (keep your existing show/hide logic)
+        function showRelevantFields() {
             document.querySelectorAll('.subject-fields').forEach(field => {
-                field.classList.add('hidden');
-                field.querySelectorAll('input, textarea').forEach(input => {
-                    input.removeAttribute('required');
-                });
+                field.style.display = 'none';
             });
             
-            // Show the selected subject's fields and add requirements
-            if (selectedSubject) {
-                const fieldsToShow = document.getElementById(`${selectedSubject}_fields`);
-                if (fieldsToShow) {
-                    fieldsToShow.classList.remove('hidden');
-                    fieldsToShow.querySelectorAll('input, textarea').forEach(input => {
-                        input.setAttribute('required', '');
-                    });
-                }
+            const subject = document.getElementById('subject').value;
+            if (subject) {
+                const fieldsToShow = document.getElementById(`${subject}_fields`);
+                if (fieldsToShow) fieldsToShow.style.display = 'block';
             }
-        });
+        }
 
-        // Form submission handler
-        document.getElementById('supportForm').addEventListener('submit', async function(e) {
+        // NEW FORM SUBMISSION HANDLER (ADD THIS)
+        document.getElementById('supportForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Clear previous errors
-            document.querySelectorAll('.error').forEach(el => {
-                el.classList.add('hidden');
-            });
-            
-            // Validate visible fields
-            let isValid = true;
-            const visibleFields = document.querySelectorAll('.subject-fields:not(.hidden) input, .subject-fields:not(.hidden) textarea');
-            
-            visibleFields.forEach(field => {
-                if (!field.value.trim()) {
-                    isValid = false;
-                    const errorElement = document.getElementById(`${field.name}Error`) || 
-                                        document.createElement('div');
-                    errorElement.textContent = 'This field is required';
-                    errorElement.classList.remove('hidden');
-                    field.parentNode.appendChild(errorElement);
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+
+            try {
+                const formData = new FormData(e.target);
+                const response = await fetch('/api/submit-form', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(Object.fromEntries(formData))
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'Failed to submit form');
                 }
-            });
-            
-            if (isValid) {
-                // Submit form via Fetch API
-                try {
-                    const formData = new FormData(this);
-                    const response = await fetch('/api/submit-form', {
-                        method: 'POST',
-                        body: JSON.stringify(Object.fromEntries(formData)),
-                        headers: { 'Content-Type': 'application/json' }
-                    });
-                    
-                    if (response.ok) {
-                        document.getElementById('formContainer').classList.add('hidden');
-                        document.getElementById('successMessage').classList.remove('hidden');
-                    } else {
-                        alert('Error submitting form. Please try again.');
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Network error. Please try again.');
-                }
+
+                // Success - hide form, show success message
+                document.getElementById('formContainer').style.display = 'none';
+                document.getElementById('successMessage').style.display = 'block';
+            } catch (error) {
+                alert(`Error: ${error.message}`);
+                console.error('Submission error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Request';
             }
         });
 
-        function resetForm() {
-            document.getElementById('supportForm').reset();
-            document.querySelectorAll('.subject-fields').forEach(field => {
-                field.classList.add('hidden');
-                field.querySelectorAll('input, textarea').forEach(input => {
-                    input.removeAttribute('required');
-                });
-            });
-            document.getElementById('successMessage').classList.add('hidden');
-            document.getElementById('formContainer').classList.remove('hidden');
-        }
+        // Initialize form display
+        document.addEventListener('DOMContentLoaded', showRelevantFields);
     </script>
+</body>
+</html>
 </body>
 </html>
