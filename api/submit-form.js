@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function handler(req, res) {
+export default async (req, res) => {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -11,9 +11,15 @@ export default async function handler(req, res) {
   try {
     const { email, username, subject, ...formData } = req.body;
 
+    // Validate required fields
+    if (!email || !username || !subject) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Send email
     const { data, error } = await resend.emails.send({
-      from: process.env.NEXT_PUBLIC_RESEND_FROM,
-      to: process.env.NEXT_PUBLIC_RESEND_TO,
+      from: 'email-admin@abacromby9-studios.xyz',
+      to: 'support@email.com', // Replace with your email
       subject: `[Support] ${subject} - ${username}`,
       html: `
         <h2>New Support Request</h2>
@@ -29,9 +35,9 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to send email' });
     }
 
-    return res.status(200).json({ success: true, data });
+    return res.status(200).json({ success: true });
   } catch (err) {
     console.error('Server error:', err);
     return res.status(500).json({ error: 'Internal server error' });
   }
-}
+};
