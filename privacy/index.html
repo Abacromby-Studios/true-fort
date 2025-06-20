@@ -3,28 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Abacromby9 Studios</title>
+    <title>Privacy Policy - True-Fort SMP</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .policy-section {
+            margin-bottom: 3rem;
+        }
+        .policy-section h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 0.5rem;
+        }
+        .policy-list {
+            padding-left: 1.5rem;
+        }
+        .policy-list li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .policy-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        .last-updated {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>True-Fort SMP & Factions Privacy Policy</h1>
-    </header>
- <header>
-        <nav>
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
-        </nav>
+        <div class="header-content">
+            <h1><i class="fas fa-cubes"></i> True-Fort SMP</h1>
+            <nav>
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/rules/"><i class="fas fa-gavel"></i> Rules</a>
+                <a href="/contact/"><i class="fas fa-headset"></i> Support</a>
+                <a href="/discord/"><i class="fab fa-discord"></i> Discord</a>
+                <a href="/privacy/"><i class="fas fa-lock"></i> Privacy</a>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <section>
-            <h2>1. Information We Collect</h2>
+        <section class="intro">
+            <h1><i class="fas fa-lock"></i> Privacy Policy</h1>
+            <p class="last-updated">Last Updated: June 20, 2025</p>
+        </section>
+
+        <section class="policy-section">
+            <h2><i class="fas fa-info-circle"></i> 1. Information We Collect</h2>
             <p>We may collect the following information when you use our Website:</p>
-            <ul>
+            <ul class="policy-list">
                 <li>Contact information (email addresses) from support forms</li>
                 <li>Minecraft usernames for support purposes</li>
                 <li>IP addresses for security and analytics</li>
@@ -91,17 +128,22 @@
         </section>
     </main>
 
- <footer>
-        <p>Last Revised: 06/20/2025 at 1:28 AM EDT</p>
-        <p>Created: 06/19/2025 at 5:45 PM EDT</p>
-        <p>Effective: 06/20/2025 at 1:28 AM EDT</p>
-        <p>&copy; 2025 True-Fort Survival Multiplayer And Factions, And Abacromby9 Studios. All rights reserved worldwide. Not affiliated with Mojang AB or Microsoft Corporation.</p>
-        <div style="margin-top: 1rem;">
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3><i class="fas fa-cubes"></i> True-Fort SMP</h3>
+                <p>The ultimate Minecraft survival experience</p>
+            </div>
+            <div class="footer-links">
+                <a href="/terms/"><i class="fas fa-file-contract"></i> Terms</a>
+                <a href="/privacy/"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="/contact/"><i class="fas fa-headset"></i> Contact</a>
+                <a href="/discord/"><i class="fab fa-discord"></i> Discord</a>
+            </div>
+            <div class="footer-legal">
+                <p>&copy; 2025 True-Fort Survival Multiplayer And Factions. All rights reserved.</p>
+                <p>Not affiliated with Mojang AB or Microsoft Corporation.</p>
+            </div>
         </div>
     </footer>
 </body>
