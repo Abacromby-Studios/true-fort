@@ -3,49 +3,46 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export default async (req, res) => {
-  // Set JSON content type first
-  res.setHeader('Content-Type', 'application/json');
-
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
-  try {
-    const body = JSON.parse(req.body);
-    const { email, username, subject, ...formData } = body;
-
-    if (!email || !username || !subject) {
-      return res.status(400).json({ 
-        error: 'Missing required fields',
-        details: { email, username, subject }
-      });
+    // Set JSON headers
+    res.setHeader('Content-Type', 'application/json');
+    
+    try {
+        // Parse incoming JSON
+        const { email, username, subject, ...data } = JSON.parse(req.body);
+        
+        // Validate
+        if (!email || !username || !subject) {
+            return res.status(400).json({ 
+                error: 'Missing required fields',
+                missing: {
+                    email: !email,
+                    username: !username,
+                    subject: !subject
+                }
+            });
+        }
+        
+        // Send email
+        const { error } = await resend.emails.send({
+            from: 'email-admin@abacromby9-studios.xyz',
+            to: process.env.CONTACT_TO_EMAIL,
+            subject: `[Support] ${subject}`,
+            html: `
+                <h2>New Support Request</h2>
+                <p><strong>From:</strong> ${username} (${email})</p>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `
+        });
+        
+        if (error) throw error;
+        
+        return res.status(200).json({ success: true });
+        
+    } catch (error) {
+        console.error('API Error:', error);
+        return res.status(500).json({ 
+            error: 'Internal server error',
+            details: error.message 
+        });
     }
-
-    const { data, error } = await resend.emails.send({
-      from: 'email-admin@abacromby9-studios.xyz',
-      to: 'support@email.com',
-      subject: `[Support] ${subject} - ${username}`,
-      html: `<pre>${JSON.stringify({ email, username, subject, ...formData }, null, 2)}</pre>`
-    });
-
-    if (error) {
-      console.error('Resend error:', error);
-      return res.status(500).json({ 
-        error: 'Email service failed',
-        details: error.message 
-      });
-    }
-
-    return res.status(200).json({ 
-      success: true,
-      message: 'Email sent successfully' 
-    });
-
-  } catch (err) {
-    console.error('Server error:', err);
-    return res.status(500).json({ 
-      error: 'Internal server error',
-      details: err.message 
-    });
-  }
 };
