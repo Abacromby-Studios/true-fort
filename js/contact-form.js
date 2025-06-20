@@ -4,10 +4,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const subjectSelect = document.getElementById('subject');
     if (subjectSelect) {
         subjectSelect.addEventListener('change', toggleSubjectFields);
+        // Set initial field visibility
+        toggleSubjectFields();
     }
-    
-    // Set initial field visibility
-    toggleSubjectFields();
     
     // Form submission handler
     const supportForm = document.getElementById('supportForm');
@@ -20,16 +19,16 @@ function toggleSubjectFields() {
     // Hide all subject fields first
     document.querySelectorAll('.subject-fields').forEach(field => {
         if (field) {
-            field.classList.add('hidden');
+            field.style.display = 'none';
         }
     });
     
     // Show only the selected subject's fields
     const selectedSubject = document.getElementById('subject');
-    if (selectedSubject) {
+    if (selectedSubject && selectedSubject.value) {
         const fieldsToShow = document.getElementById(`${selectedSubject.value}_fields`);
         if (fieldsToShow) {
-            fieldsToShow.classList.remove('hidden');
+            fieldsToShow.style.display = 'block';
         }
     }
 }
@@ -41,7 +40,7 @@ async function handleFormSubmit(e) {
     
     // Disable button during submission
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending...';
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
     
     try {
         // Collect ALL form data (including hidden fields)
@@ -66,17 +65,17 @@ async function handleFormSubmit(e) {
         }
         
         // Show success message with null checks
-        const formContainer = document.getElementById('formContainer');
+        const formContainer = document.getElementById('supportForm');
         const successMessage = document.getElementById('successMessage');
         
-        if (formContainer) formContainer.classList.add('hidden');
-        if (successMessage) successMessage.classList.remove('hidden');
+        if (formContainer) formContainer.style.display = 'none';
+        if (successMessage) successMessage.style.display = 'block';
     } catch (error) {
         console.error('Submission error:', error);
         alert(`Error: ${error.message || 'Failed to submit form'}`);
     } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Submit Request';
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Submit Request';
     }
 }
 
@@ -84,10 +83,11 @@ async function handleFormSubmit(e) {
 function resetForm() {
     const form = document.getElementById('supportForm');
     const successMessage = document.getElementById('successMessage');
-    const formContainer = document.getElementById('formContainer');
     
-    if (form) form.reset();
-    if (successMessage) successMessage.classList.add('hidden');
-    if (formContainer) formContainer.classList.remove('hidden');
+    if (form) {
+        form.reset();
+        form.style.display = 'block';
+    }
+    if (successMessage) successMessage.style.display = 'none';
     toggleSubjectFields();
 }
