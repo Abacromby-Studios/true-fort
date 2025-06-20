@@ -5,214 +5,156 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>True-Fort | Survival & Factions Minecraft Server</title>
     <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Minecraft&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Minecraft&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary: #4CAF50;
-            --secondary: #8BC34A;
-            --dark: #2E7D32;
-            --accent: #FFC107;
-            --text: #333;
-            --light: #f5f5f5;
-        }
-        
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background: url('images/minecraft-bg.jpg') no-repeat center center fixed;
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('images/minecraft-bg.jpg') no-repeat center center;
             background-size: cover;
-            color: var(--text);
-        }
-        
-        .minecraft-font {
-            font-family: 'Minecraft', sans-serif;
-        }
-        
-        header {
-            background-color: rgba(0, 0, 0, 0.8);
             color: white;
-            padding: 1rem;
+            padding: 4rem 1rem;
             text-align: center;
-            border-bottom: 4px solid var(--accent);
+            margin-bottom: 3rem;
         }
-        
         .server-name {
-            font-size: 2.5rem;
-            margin: 0;
+            font-family: 'Minecraft', sans-serif;
+            font-size: 3.5rem;
             color: var(--accent);
             text-shadow: 3px 3px 0 var(--dark);
+            margin-bottom: 0.5rem;
         }
-        
         .server-tagline {
-            font-size: 1.2rem;
-            margin: 0.5rem 0;
-            color: var(--secondary);
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            color: var(--light);
         }
-        
-        nav {
-            margin: 1rem 0;
-        }
-        
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 1rem;
-            padding: 0.5rem;
-            transition: all 0.3s;
-            border-radius: 4px;
-        }
-        
-        nav a:hover {
-            background-color: var(--primary);
-        }
-        
-        .hero {
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 3rem 1rem;
-            text-align: center;
-        }
-        
         .ip-address {
             background-color: var(--dark);
             color: white;
-            padding: 1rem;
+            padding: 1rem 2rem;
             font-size: 1.5rem;
             border-radius: 5px;
             display: inline-block;
             margin: 1rem 0;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: all 0.3s;
+            font-family: 'Minecraft', sans-serif;
         }
-        
         .ip-address:hover {
             transform: scale(1.05);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        
         .btn {
-            background-color: var(--accent);
-            color: #333;
-            padding: 0.8rem 1.5rem;
-            border: none;
+            padding: 1rem 2rem;
             border-radius: 5px;
             font-size: 1.1rem;
             margin: 0.5rem;
-            cursor: pointer;
             transition: all 0.3s;
-            text-decoration: none;
             display: inline-block;
+            text-decoration: none;
+            font-weight: 500;
         }
-        
-        .btn:hover {
-            background-color: #FFD54F;
-            transform: translateY(-2px);
-        }
-        
         .btn-primary {
             background-color: var(--primary);
             color: white;
         }
-        
         .btn-primary:hover {
-            background-color: #388E3C;
+            background-color: var(--dark);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-        
+        .btn-secondary {
+            background-color: var(--accent);
+            color: var(--dark);
+        }
+        .btn-secondary:hover {
+            background-color: #FFD54F;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
         .features {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
-            padding: 2rem;
-            background-color: rgba(255, 255, 255, 0.9);
+            padding: 2rem 0;
         }
-        
         .feature-card {
             background-color: white;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             margin: 1rem;
-            padding: 1.5rem;
+            padding: 2rem;
             width: 300px;
             text-align: center;
-            transition: transform 0.3s;
+            transition: all 0.3s;
         }
-        
         .feature-card:hover {
             transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15);
         }
-        
         .feature-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
             color: var(--primary);
         }
-        
-        footer {
-            background-color: rgba(0, 0, 0, 0.9);
+        .cta-section {
+            background: linear-gradient(135deg, var(--primary), var(--dark));
             color: white;
+            padding: 3rem 1rem;
             text-align: center;
-            padding: 1.5rem;
             margin-top: 2rem;
         }
-        
         .online-players {
             background-color: var(--dark);
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 1.5rem;
             border-radius: 20px;
             display: inline-block;
-            margin: 0.5rem 0;
-        }
-        
-        @media (max-width: 768px) {
-            .server-name {
-                font-size: 1.8rem;
-            }
-            
-            nav a {
-                display: block;
-                margin: 0.5rem 0;
-            }
+            margin: 1rem 0;
+            font-size: 1.1rem;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1 class="server-name minecraft-font">TRUE-FORT</h1>
-        <p class="server-tagline">Survival Multiplayer & Factions</p>
-        <nav>
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
-        </nav>
+        <div class="header-content">
+            <h1><i class="fas fa-cubes"></i> True-Fort SMP</h1>
+            <nav>
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/rules/"><i class="fas fa-gavel"></i> Rules</a>
+                <a href="/contact/"><i class="fas fa-headset"></i> Support</a>
+                <a href="/discord/"><i class="fab fa-discord"></i> Discord</a>
+                <a href="/privacy/"><i class="fas fa-lock"></i> Privacy</a>
+            </nav>
+        </div>
     </header>
 
     <section class="hero">
-        <div class="container">
-            <h2>Join the Ultimate Survival Experience</h2>
-            <p>Build, conquer, and survive in our custom factions world with enhanced gameplay features!</p>
-
-            <div class="ip-address" onclick="copyToClipboard('play.true-fort.abacromby9-studios.xyz')" title="Click to copy">
-                
-            </div>
-            
-            <div>
-                <a href="minecraft://?addServer:True-Fort|play.true-fort.abacromby9-studios.xyz" class="btn btn-primary">
-                    Connect Now
-                </a>
-                <a href="/discord/" class="btn">
-                    Join Discord
-                </a>
-            </div>
+        <h1 class="server-name">TRUE-FORT</h1>
+        <p class="server-tagline">Survival Multiplayer & Factions</p>
+        
+        <div class="online-players">
+            <i class="fas fa-users"></i> <span id="playerCount">127</span> players online now!
+        </div>
+        
+        <div class="ip-address" onclick="copyToClipboard('play.true-fort.abacromby9-studios.xyz')">
+            play.true-fort.abacromby9-studios.xyz
+        </div>
+        
+        <div>
+            <a href="minecraft://?addServer:True-Fort|play.true-fort.abacromby9-studios.xyz" class="btn btn-primary">
+                <i class="fas fa-plug"></i> Connect Now
+            </a>
+            <a href="/discord/" class="btn btn-secondary">
+                <i class="fab fa-discord"></i> Join Discord
+            </a>
         </div>
     </section>
 
     <section class="features">
         <div class="feature-card">
-            <div class="feature-icon">⚔️</div>
+            <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
             <h3>Enhanced Factions</h3>
-            <p>Custom faction mechanics with wars, raids, SlimeFun v4. Geyser MC and unique abilities to dominate the world.</p>
+            <p>Custom faction mechanics with wars, raids, and unique abilities to dominate the world.</p>
         </div>
         
         <div class="feature-card">
@@ -238,51 +180,54 @@
             <h3>1.14+ Support</h3>
             <p>allows older versions and updates them for this server only for modern Minecraft versions with optimized performance.</p>
         </div>
-    </section>
+  </section>
 
-    <section style="background-color: rgba(0,0,0,0.8); color: white; padding: 2rem; text-align: center;">
+    <section class="cta-section">
         <h2>Ready to Begin Your Journey?</h2>
         <p>Join hundreds of players in our thriving community!</p>
-        <div style="margin-top: 1rem;">
-            <div class="ip-address" onclick="copyToClipboard('play.true-fort.abacromby9-studios.xyz')" title="Click to copy">
-                play.true-fort.com
-            </div>
-            <a href="minecraft://?addServer:True-Fort|play.true-fort.abacromby9-studios.xyz" class="btn btn-primary" style="margin-top: 1rem;">
-                Connect Now
-            </a>
+        <div class="ip-address" onclick="copyToClipboard('play.true-fort.abacromby9-studios.xyz')">
+            play.true-fort.abacromby9-studios.xyz
         </div>
+        <a href="minecraft://?addServer:True-Fort|play.true-fort.abacromby9-studios.xyz" class="btn btn-primary">
+            <i class="fas fa-plug"></i> Connect Now
+        </a>
     </section>
 
     <footer>
-        <p>&copy; 2025 True-Fort Survival Multiplayer And Factions, And Abacromby9 Studios. All rights reserved worldwide. Not affiliated with Mojang AB or Microsoft Corporation.</p>
-        <div style="margin-top: 1rem;">
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3><i class="fas fa-cubes"></i> True-Fort SMP</h3>
+                <p>The ultimate Minecraft survival experience</p>
+            </div>
+            <div class="footer-links">
+                <a href="/terms/"><i class="fas fa-file-contract"></i> Terms</a>
+                <a href="/privacy/"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="/contact/"><i class="fas fa-headset"></i> Contact</a>
+                <a href="/discord/"><i class="fab fa-discord"></i> Discord</a>
+            </div>
+            <div class="footer-legal">
+                <p>&copy; 2025 True-Fort Survival Multiplayer And Factions. All rights reserved.</p>
+                <p>Not affiliated with Mojang AB or Microsoft Corporation.</p>
+            </div>
         </div>
     </footer>
 
     <script>
+        // Dynamic player count
+        function updatePlayerCount() {
+            const baseCount = 127;
+            const fluctuation = Math.floor(Math.random() * 15) - 7;
+            document.getElementById('playerCount').textContent = baseCount + fluctuation;
+        }
+        setInterval(updatePlayerCount, 30000);
+        updatePlayerCount();
+
         // Copy IP to clipboard
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
                 alert('Server IP copied to clipboard!');
             });
         }
-        
-        // Dynamic player count (example - replace with real API call)
-        function updatePlayerCount() {
-            // In a real implementation, you would fetch this from your server API
-            const baseCount = 127;
-            const fluctuation = Math.floor(Math.random() * 15) - 7;
-            document.getElementById('playerCount').textContent = baseCount + fluctuation;
-        }
-        
-        // Update every 30 seconds
-        setInterval(updatePlayerCount, 30000);
-        updatePlayerCount();
     </script>
 </body>
 </html>
