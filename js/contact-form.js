@@ -2,25 +2,32 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Field visibility toggling
     const subjectSelect = document.getElementById('subject');
-    subjectSelect.addEventListener('change', toggleSubjectFields);
+    if (subjectSelect) {
+        subjectSelect.addEventListener('change', toggleSubjectFields);
+    }
     
     // Set initial field visibility
     toggleSubjectFields();
     
     // Form submission handler
-    document.getElementById('supportForm').addEventListener('submit', handleFormSubmit);
+    const supportForm = document.getElementById('supportForm');
+    if (supportForm) {
+        supportForm.addEventListener('submit', handleFormSubmit);
+    }
 });
 
 function toggleSubjectFields() {
     // Hide all subject fields first
     document.querySelectorAll('.subject-fields').forEach(field => {
-        field.classList.add('hidden');
+        if (field) {
+            field.classList.add('hidden');
+        }
     });
     
     // Show only the selected subject's fields
-    const selectedSubject = document.getElementById('subject').value;
+    const selectedSubject = document.getElementById('subject');
     if (selectedSubject) {
-        const fieldsToShow = document.getElementById(`${selectedSubject}_fields`);
+        const fieldsToShow = document.getElementById(`${selectedSubject.value}_fields`);
         if (fieldsToShow) {
             fieldsToShow.classList.remove('hidden');
         }
@@ -30,6 +37,7 @@ function toggleSubjectFields() {
 async function handleFormSubmit(e) {
     e.preventDefault();
     const submitBtn = document.getElementById('submitBtn');
+    if (!submitBtn) return;
     
     // Disable button during submission
     submitBtn.disabled = true;
@@ -57,9 +65,12 @@ async function handleFormSubmit(e) {
             throw new Error(error.message || 'Server error');
         }
         
-        // Show success message
-        document.getElementById('formContainer').classList.add('hidden');
-        document.getElementById('successMessage').classList.remove('hidden');
+        // Show success message with null checks
+        const formContainer = document.getElementById('formContainer');
+        const successMessage = document.getElementById('successMessage');
+        
+        if (formContainer) formContainer.classList.add('hidden');
+        if (successMessage) successMessage.classList.remove('hidden');
     } catch (error) {
         console.error('Submission error:', error);
         alert(`Error: ${error.message || 'Failed to submit form'}`);
@@ -71,8 +82,12 @@ async function handleFormSubmit(e) {
 
 // Reset form after successful submission
 function resetForm() {
-    document.getElementById('supportForm').reset();
-    document.getElementById('successMessage').classList.add('hidden');
-    document.getElementById('formContainer').classList.remove('hidden');
+    const form = document.getElementById('supportForm');
+    const successMessage = document.getElementById('successMessage');
+    const formContainer = document.getElementById('formContainer');
+    
+    if (form) form.reset();
+    if (successMessage) successMessage.classList.add('hidden');
+    if (formContainer) formContainer.classList.remove('hidden');
     toggleSubjectFields();
 }
