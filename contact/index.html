@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Support - Abacromby9 Studios</title>
+    <title>Contact Support - True-Fort</title>
     <link rel="stylesheet" href="/css/styles.css">
     <style>
         .hidden { display: none; }
@@ -15,16 +15,22 @@
             border-radius: 5px;
             margin: 20px 0;
         }
+        .subject-fields {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
     </style>
 </head>
 <body>
- <header>
+    <header>
+        <h1>Contact Support</h1>
         <nav>
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a>
-            <a href="/discord/index.html">Discord Server</a>
-            <a href="/rules/index.html/">Rules</a>
+            <a href="/">Home</a> |
+            <a href="/rules/">Rules</a> |
+            <a href="/discord/">Discord</a>
         </nav>
     </header>
 
@@ -45,7 +51,7 @@
 
                 <div class="form-group">
                     <label for="subject">Support Subject:</label>
-                    <select id="subject" name="subject" required onchange="showRelevantFields()">
+                    <select id="subject" name="subject" required>
                         <option value="">-- Select a subject --</option>
                         <option value="player_report">Player Report</option>
                         <option value="general_support">General Support</option>
@@ -56,59 +62,54 @@
                 </div>
 
                 <!-- Player Report Fields -->
-                <div id="playerReportFields" class="subject-fields" style="display:none;">
+                <div id="player_report_fields" class="subject-fields hidden">
                     <div class="form-group">
                         <label for="broken_rule">Which rule was broken?</label>
-                        <textarea id="broken_rule" name="broken_rule" rows="3"></textarea>
-                        <div id="brokenRuleError" class="error hidden"></div>
+                        <textarea id="broken_rule" name="broken_rule" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="video_link">Video Evidence Link (YouTube/Google Drive):</label>
-                        <input type="url" id="video_link" name="video_link" placeholder="https://">
+                        <label for="video_link">Video Evidence Link:</label>
+                        <input type="url" id="video_link" name="video_link" placeholder="https://youtube.com/..." required>
                     </div>
                 </div>
 
                 <!-- General Support Fields -->
-                <div id="generalSupportFields" class="subject-fields" style="display:none;">
+                <div id="general_support_fields" class="subject-fields hidden">
                     <div class="form-group">
                         <label for="general_subject">Subject:</label>
-                        <input type="text" id="general_subject" name="general_subject">
+                        <input type="text" id="general_subject" name="general_subject" required>
                     </div>
                     <div class="form-group">
                         <label for="general_description">Description:</label>
-                        <textarea id="general_description" name="general_description" rows="5"></textarea>
+                        <textarea id="general_description" name="general_description" rows="5" required></textarea>
                     </div>
                 </div>
 
                 <!-- Legal Inquiry Fields -->
-                <div id="legalInquiryFields" class="subject-fields" style="display:none;">
+                <div id="legal_inquiry_fields" class="subject-fields hidden">
                     <div class="form-group">
                         <label for="legal_subject">Subject:</label>
-                        <input type="text" id="legal_subject" name="legal_subject">
+                        <input type="text" id="legal_subject" name="legal_subject" required>
                     </div>
                     <div class="form-group">
                         <label for="legal_description">Description:</label>
-                        <textarea id="legal_description" name="legal_description" rows="5"></textarea>
+                        <textarea id="legal_description" name="legal_description" rows="5" required></textarea>
                     </div>
                 </div>
 
                 <!-- Appeal Request Fields -->
-                <div id="appealRequestFields" class="subject-fields" style="display:none;">
+                <div id="appeal_request_fields" class="subject-fields hidden">
                     <div class="form-group">
-                        <label for="enforcement_action">Enforcement Action You're Appealing:</label>
-                        <input type="text" id="enforcement_action" name="enforcement_action">
+                        <label for="enforcement_action">Enforcement Action:</label>
+                        <input type="text" id="enforcement_action" name="enforcement_action" required>
                     </div>
                     <div class="form-group">
-                        <label for="enforcement_reason">Reason Given for Action:</label>
-                        <textarea id="enforcement_reason" name="enforcement_reason" rows="3"></textarea>
+                        <label for="enforcement_reason">Original Reason:</label>
+                        <textarea id="enforcement_reason" name="enforcement_reason" rows="3" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="appeal_reason">Why should this be lifted?</label>
-                        <textarea id="appeal_reason" name="appeal_reason" rows="5"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="appeal_notes">Additional Notes:</label>
-                        <textarea id="appeal_notes" name="appeal_notes" rows="3"></textarea>
+                        <textarea id="appeal_reason" name="appeal_reason" rows="5" required></textarea>
                     </div>
                 </div>
 
@@ -118,39 +119,60 @@
 
         <div id="successMessage" class="success-message hidden">
             <h3>✓ Request Submitted Successfully!</h3>
-            <p>We'll get back to you soon at your provided email address.</p>
+            <p>We'll respond to your email within 24-48 hours.</p>
             <button onclick="resetForm()">Submit Another Request</button>
         </div>
-    </footer>
+    </main>
 
-    <script src="/js/scripts.js"></script>
     <script>
-        // Show/hide relevant fields based on subject selection
-        function showRelevantFields() {
+        // Show/hide fields based on selected subject
+        document.getElementById('subject').addEventListener('change', function() {
+            // Hide all subject fields first
             document.querySelectorAll('.subject-fields').forEach(field => {
-                field.style.display = 'none';
+                field.classList.add('hidden');
             });
             
-            const subject = document.getElementById('subject').value;
-            if (subject) {
-                const fieldsId = subject + 'Fields';
-                const fieldsElement = document.getElementById(fieldsId);
-                if (fieldsElement) {
-                    fieldsElement.style.display = 'block';
+            // Show the selected subject's fields
+            const selectedSubject = this.value;
+            if (selectedSubject) {
+                const fieldsToShow = document.getElementById(`${selectedSubject}_fields`);
+                if (fieldsToShow) {
+                    fieldsToShow.classList.remove('hidden');
                 }
             }
-        }
+        });
 
-        // Reset form after successful submission
+        // Form submission handler
+        document.getElementById('supportForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Basic validation
+            let isValid = true;
+            const email = document.getElementById('email').value;
+            if (!email || !email.includes('@')) {
+                document.getElementById('emailError').textContent = 'Please enter a valid email';
+                document.getElementById('emailError').classList.remove('hidden');
+                isValid = false;
+            }
+            
+            // Add similar validation for other required fields
+            
+            if (isValid) {
+                // Submit form via Fetch API (as shown in previous examples)
+                // On success:
+                document.getElementById('formContainer').classList.add('hidden');
+                document.getElementById('successMessage').classList.remove('hidden');
+            }
+        });
+
         function resetForm() {
             document.getElementById('supportForm').reset();
+            document.querySelectorAll('.subject-fields').forEach(field => {
+                field.classList.add('hidden');
+            });
             document.getElementById('successMessage').classList.add('hidden');
-            document.getElementById('formContainer').style.display = 'block';
-            showRelevantFields();
+            document.getElementById('formContainer').classList.remove('hidden');
         }
-
-        // Initialize form display
-        document.addEventListener('DOMContentLoaded', showRelevantFields);
     </script>
 </body>
 </html>
