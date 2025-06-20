@@ -1,91 +1,131 @@
-<!-- /terms/index.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Use - Abacromby9 Studios</title>
+    <title>Terms of Use - True-Fort SMP</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .notice {
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+            font-weight: 500;
+        }
+        .notice.warning {
+            background-color: rgba(255, 193, 7, 0.2);
+            border-left: 4px solid #FFC107;
+        }
+        .last-updated {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+        }
+        .rule-list li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        .rule-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>True-Fort SMP & Factions Terms of Use</h1>
-    </header>
-    
- <header>
-        <nav>
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
-        </nav>
+        <div class="header-content">
+            <h1><i class="fas fa-cubes"></i> True-Fort SMP Terms of Use</h1>
+            <nav>
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/rules/index.html"><i class="fas fa-gavel"></i> Rules</a>
+                <a href="/contact/index.html"><i class="fas fa-headset"></i> Support</a>
+                <a href="/discord/index.html"><i class="fab fa-discord"></i> Discord</a>
+                <a href="/privacy/index.html"><i class="fas fa-lock"></i> Privacy</a>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <section>
-            <h2>1. Acceptance of Terms</h2>
-            <p>By accessing and using abacromby9-studios.xyz ("the Website") or the minecraft server ("server") and any associated services, you accept and agree to be bound by these Terms of Use.</p>
+        <section class="intro">
+            <h1><i class="fas fa-file-contract"></i> Terms of Use</h1>
+            <p class="last-updated">Last Updated: June 20, 2025</p>
+            <div class="notice warning">
+                <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> By using our services, you agree to these terms.
+            </div>
         </section>
 
         <section>
-            <h2>2. Description of Service</h2>
+            <h2><i class="fas fa-check-circle"></i> 1. Acceptance of Terms</h2>
+            <p>By accessing and using abacromby9-studios.xyz ("the Website") or the Minecraft server ("server") and any associated services, you accept and agree to be bound by these Terms of Use.</p>
+        </section>
+
+        <section>
+            <h2><i class="fas fa-info-circle"></i> 2. Description of Service</h2>
             <p>The Website provides information about our Minecraft server and community, including rules, contact forms, and links to our Discord server.</p>
         </section>
 
         <section>
-            <h2>3. User Conduct</h2>
+            <h2><i class="fas fa-user-shield"></i> 3. User Conduct</h2>
             <p>Users agree not to:</p>
-            <ul>
+            <ul class="rule-list">
                 <li>Use the Website for any unlawful purpose</li>
                 <li>Post or transmit harmful or malicious content</li>
                 <li>Attempt to gain unauthorized access to the Website or its systems</li>
                 <li>Impersonate any person or entity</li>
                 <li>Interfere with the proper working of the Website</li>
-                <li>Make support tickets for no good reason or for no reasonable reason.</li>
+                <li>Make support tickets without valid reasons</li>
             </ul>
         </section>
 
         <section>
-            <h2>4. Intellectual Property</h2>
+            <h2><i class="fas fa-copyright"></i> 4. Intellectual Property</h2>
             <p>All content on the Website, unless otherwise noted, is the property of Abacromby9 Studios and protected by copyright laws.</p>
         </section>
 
         <section>
-            <h2>5. Limitation of Liability</h2>
+            <h2><i class="fas fa-balance-scale"></i> 5. Limitation of Liability</h2>
             <p>Abacromby9 Studios shall not be liable for any damages resulting from the use or inability to use the Website or its services.</p>
         </section>
 
         <section>
-            <h2>6. Modifications to Terms</h2>
+            <h2><i class="fas fa-edit"></i> 6. Modifications to Terms</h2>
             <p>We reserve the right to modify these terms at any time. Continued use after changes constitutes acceptance of the new terms.</p>
         </section>
 
         <section>
-            <h2>7. Governing Law</h2>
-            <p>These Terms shall be governed by the laws of the commonwealth of pennsylvania without regard to its conflict of law provisions.</p>
+            <h2><i class="fas fa-landmark"></i> 7. Governing Law</h2>
+            <p>These Terms shall be governed by the laws of the Commonwealth of Pennsylvania without regard to its conflict of law provisions.</p>
         </section>
 
         <section>
-            <h2>8. Contact Information</h2>
-            <p>For questions about these Terms, please contact us through our <a href="../contact/">contact page</a>.</p>
+            <h2><i class="fas fa-envelope"></i> 8. Contact Information</h2>
+            <p>For questions about these Terms, please contact us through our <a href="../contact/"><i class="fas fa-external-link-alt"></i> contact page</a>.</p>
         </section>
     </main>
 
     <footer>
-        <p>Last Revised: 06/20/2025 at 1:28 AM EDT</p>
-        <p>Created: 06/19/2025 at 5:45 PM EDT</p>
-        <p>Effective: 06/20/2025 at 1:28 AM EDT</p>
-        <p>&copy; 2025 True-Fort Survival Multiplayer And Factions, And Abacromby9 Studios. All rights reserved worldwide. Not affiliated with Mojang AB or Microsoft Corporation.</p>
-        <div style="margin-top: 1rem;">
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3><i class="fas fa-cubes"></i> True-Fort SMP</h3>
+                <p>The ultimate Minecraft survival experience</p>
+            </div>
+            <div class="footer-links">
+                <a href="/terms/index.html"><i class="fas fa-file-contract"></i> Terms</a>
+                <a href="/privacy/index.html"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="/contact/index.html"><i class="fas fa-headset"></i> Contact</a>
+                <a href="/discord/index.html"><i class="fab fa-discord"></i> Discord</a>
+            </div>
+            <div class="footer-legal">
+                <p>&copy; 2025 True-Fort Survival Multiplayer And Factions. All rights reserved.</p>
+                <p>Not affiliated with Mojang AB or Microsoft Corporation.</p>
+            </div>
         </div>
     </footer>
-
- 
 </body>
 </html>
