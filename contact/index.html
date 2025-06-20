@@ -131,7 +131,8 @@
                 </div>
 
                 <!-- Player Report Fields -->
-                <div id="player_report_fields" class="subject-fields hidden">
+                <!-- Dynamic Fields (initially hidden) -->
+                <div id="player_report_fields" class="subject-fields">
                     <div class="form-group">
                         <label for="broken_rule">Which rule was broken?</label>
                         <textarea id="broken_rule" name="broken_rule" rows="3"></textarea>
@@ -142,61 +143,25 @@
                     </div>
                 </div>
 
-                <!-- General Support Fields -->
-                <div id="general_support_fields" class="subject-fields hidden">
-                    <div class="form-group">
-                        <label for="general_subject">Subject:</label>
-                        <input type="text" id="general_subject" name="general_subject">
-                    </div>
-                    <div class="form-group">
-                        <label for="general_description">Description:</label>
-                        <textarea id="general_description" name="general_description" rows="5"></textarea>
-                    </div>
+                <div id="general_support_fields" class="subject-fields">
+                    <!-- General Support fields -->
                 </div>
 
-                <!-- Legal Inquiry Fields -->
-                <div id="legal_inquiry_fields" class="subject-fields hidden">
-                    <div class="form-group">
-                        <label for="legal_subject">Subject:</label>
-                        <input type="text" id="legal_subject" name="legal_subject">
-                    </div>
-                    <div class="form-group">
-                        <label for="legal_description">Description:</label>
-                        <textarea id="legal_description" name="legal_description" rows="5"></textarea>
-                    </div>
+                <div id="legal_inquiry_fields" class="subject-fields">
+                    <!-- Legal Inquiry fields -->
                 </div>
 
-                <!-- Appeal Request Fields -->
-                <div id="appeal_request_fields" class="subject-fields hidden">
-                    <div class="form-group">
-                        <label for="enforcement_action">Enforcement Action:</label>
-                        <input type="text" id="enforcement_action" name="enforcement_action">
-                    </div>
-                    <div class="form-group">
-                        <label for="enforcement_reason">Original Reason:</label>
-                        <textarea id="enforcement_reason" name="enforcement_reason" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="appeal_reason">Why should this be lifted?</label>
-                        <textarea id="appeal_reason" name="appeal_reason" rows="5"></textarea>
-                    </div>
+                <div id="appeal_request_fields" class="subject-fields">
+                    <!-- Appeal Request fields -->
                 </div>
 
-              <button type="submit" id="submitBtn">
+                <button type="submit" id="submitBtn">
                     <i class="fas fa-paper-plane"></i> Submit Request
                 </button>
             </form>
-            
-            <div id="successMessage" class="success-message hidden">
-                <h3><i class="fas fa-check-circle"></i> Request Submitted Successfully!</h3>
-                <p>We'll respond to your email within 24-48 hours.</p>
-                <button onclick="resetForm()" class="btn">
-                    <i class="fas fa-plus"></i> Submit Another Request
-                </button>
-            </div>
         </div>
     </main>
-
+             
     <footer>
         <div class="footer-content">
             <div class="footer-brand">
@@ -204,10 +169,10 @@
                 <p>The ultimate Minecraft survival experience</p>
             </div>
             <div class="footer-links">
-                <a href="/terms/"><i class="fas fa-file-contract"></i> Terms</a>
-                <a href="/privacy/"><i class="fas fa-lock"></i> Privacy</a>
-                <a href="/contact/"><i class="fas fa-headset"></i> Contact</a>
-                <a href="/discord/"><i class="fab fa-discord"></i> Discord</a>
+                <a href="/terms/index.html"><i class="fas fa-file-contract"></i> Terms</a>
+                <a href="/privacy/index.html"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="/contact/index.html"><i class="fas fa-headset"></i> Contact</a>
+                <a href="/discord/index.html"><i class="fab fa-discord"></i> Discord</a>
             </div>
             <div class="footer-legal">
                 <p>&copy; 2025 True-Fort Survival Multiplayer And Factions. All rights reserved.</p>
