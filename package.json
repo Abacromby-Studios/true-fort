@@ -1,0 +1,10 @@
+{
+  "name": "true-fort-website",
+  "version": "1.0.0",
+  "dependencies": {
+    "resend": "^latest"
+  },
+  "engines": {
+    "node": ">=18.x"
+  }
+}
