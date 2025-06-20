@@ -3,44 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Join Our Discord - Abacromby9 Studios</title>
+    <title>Join Our Discord - True-Fort SMP</title>
     <link rel="stylesheet" href="../css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <meta http-equiv="refresh" content="5;url=https://discord.gg/xyh2w9J7fw">
+    <style>
+        .discord-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .discord-widget {
+            margin: 2rem auto;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .countdown {
+            font-size: 1.2rem;
+            margin: 1rem 0;
+            color: var(--primary);
+        }
+        .manual-link {
+            display: inline-block;
+            margin-top: 1rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1>Join Our Discord</h1>
-    </header>
- <header>
-        <nav>
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
-        </nav>
+        <div class="header-content">
+            <h1><i class="fas fa-cubes"></i> True-Fort SMP</h1>
+            <nav>
+                <a href="/"><i class="fas fa-home"></i> Home</a>
+                <a href="/rules/"><i class="fas fa-gavel"></i> Rules</a>
+                <a href="/contact/"><i class="fas fa-headset"></i> Support</a>
+                <a href="/discord/"><i class="fab fa-discord"></i> Discord</a>
+                <a href="/privacy/"><i class="fas fa-lock"></i> Privacy</a>
+            </nav>
+        </div>
     </header>
 
     <main>
-        <div class="discord-redirect">
-            <p>You are being redirected to our Discord server. If you are not redirected automatically, <a href="https://discord.gg/xyh2w9J7fw">click here</a>.</p>
+        <div class="discord-container">
+            <h1><i class="fab fa-discord"></i> Join Our Community</h1>
+            <p>You're being redirected to our Discord server in <span id="countdown">5</span> seconds...</p>
+            <p class="countdown">Don't want to wait? <a href="https://discord.gg/xyh2w9J7fw" class="manual-link">Click here to join now</a></p>
             
             <div class="discord-widget">
-                <!-- Replace with your actual Discord widget code -->
-               <iframe src="https://discord.com/widget?id=1351345510199464007&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                <iframe src="https://discord.com/widget?id=1351345510199464007&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
             </div>
         </div>
     </main>
 
     <footer>
- <p>&copy; 2025 True-Fort Survival Multiplayer And Factions, And Abacromby9 Studios. All rights reserved worldwide. Not affiliated with Mojang AB or Microsoft Corporation.</p>
-        <div style="margin-top: 1rem;">
-            <a href="/terms/index.html/">Terms</a> | 
-            <a href="/privacy/index.html">Privacy</a> | 
-            <a href="/contact/index.html/">Contact</a> | 
-            <a href="/discord/index.html">Discord Server</a> | 
-            <a href="/rules/index.html/">Rules</a> | 
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3><i class="fas fa-cubes"></i> True-Fort SMP</h3>
+                <p>The ultimate Minecraft survival experience</p>
+            </div>
+            <div class="footer-links">
+                <a href="/terms/"><i class="fas fa-file-contract"></i> Terms</a>
+                <a href="/privacy/"><i class="fas fa-lock"></i> Privacy</a>
+                <a href="/contact/"><i class="fas fa-headset"></i> Contact</a>
+                <a href="/discord/"><i class="fab fa-discord"></i> Discord</a>
+            </div>
+            <div class="footer-legal">
+                <p>&copy; 2025 True-Fort Survival Multiplayer And Factions. All rights reserved.</p>
+                <p>Not affiliated with Mojang AB or Microsoft Corporation.</p>
+            </div>
         </div>
     </footer>
+
+    <script>
+        // Countdown timer
+        let seconds = 5;
+        const countdownElement = document.getElementById('countdown');
+        const countdownInterval = setInterval(() => {
+            seconds--;
+            countdownElement.textContent = seconds;
+            if (seconds <= 0) {
+                clearInterval(countdownInterval);
+            }
+        }, 1000);
+    </script>
 </body>
 </html>
