@@ -123,56 +123,6 @@
             <button onclick="resetForm()">Submit Another Request</button>
         </div>
     </main>
-
-   <script>
-        // Dynamic field handling (keep your existing show/hide logic)
-        function showRelevantFields() {
-            document.querySelectorAll('.subject-fields').forEach(field => {
-                field.style.display = 'none';
-            });
-            
-            const subject = document.getElementById('subject').value;
-            if (subject) {
-                const fieldsToShow = document.getElementById(`${subject}_fields`);
-                if (fieldsToShow) fieldsToShow.style.display = 'block';
-            }
-        }
-
-        // NEW FORM SUBMISSION HANDLER (ADD THIS)
-        document.getElementById('supportForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
-
-            try {
-                const formData = new FormData(e.target);
-                const response = await fetch('/api/submit-form', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(Object.fromEntries(formData))
-                });
-
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'Failed to submit form');
-                }
-
-                // Success - hide form, show success message
-                document.getElementById('formContainer').style.display = 'none';
-                document.getElementById('successMessage').style.display = 'block';
-            } catch (error) {
-                alert(`Error: ${error.message}`);
-                console.error('Submission error:', error);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit Request';
-            }
-        });
-
-        // Initialize form display
-        document.addEventListener('DOMContentLoaded', showRelevantFields);
-    </script>
+    <script src="/js/contact-form.js"></script>
 </body>
 </html>
