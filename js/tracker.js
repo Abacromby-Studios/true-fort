@@ -111,22 +111,21 @@ function trackClicks() {
 // 4. DISCORD REPORTING (Enhanced)
 async function sendToDiscord(trigger, interaction) {
   try {
-    // Create description with line breaks instead of inline fields
     let description = `
 🚀 **${getReportTitle(trigger)}**
 🌐 **Page:** ${trackingData.page}
 🔗 **Referrer:** ${trackingData.referrer || 'Direct'}
 📱 **Device:** ${trackingData.device.os} | ${trackingData.device.browser}
-📍 **Location:** ${trackingData.location.city}, ${trackingData.location.region} ${trackingData.location.country} ${trackingData.location.postal} 
+📍 **Location:** ${trackingData.location.city}, ${trackingData.location.region} ${trackingData.location.country} ${trackingData.location.postal}
 🆔 **IP:** ${trackingData.location.ip}
 🛡️ **VPN:** ${trackingData.location.vpn ? 'Yes' : 'No'}
 📡 **ISP:** ${trackingData.location.isp || 'Unknown'}
 🕒 **Timezone:** ${trackingData.location.timezone}
-🔎 **Screen size:** ${screen.width}x${screen.height}
-👆 **Is the Screen touch screen?:** ${ontouchstart}
-🍪 **Cookies Enabled?:** ${navigator.cookieEnabled}
-💻 **CPU Details:** ${navigator.hardwareConcurrency}
-🖥️ **Memory Details:** ${navigator.deviceMemory}
+🔎 **Screen size:** ${trackingData.device.screen}
+👆 **Is the Screen touch screen?:** ${trackingData.device.touch ? 'Yes' : 'No'}
+🍪 **Cookies Enabled?:** ${trackingData.device.cookies ? 'Yes' : 'No'}
+💻 **CPU Cores:** ${trackingData.device.cpuCores}
+🖥️ **Device Memory:** ${trackingData.device.memory} GB
 `;
 
     // Add interaction details if available
