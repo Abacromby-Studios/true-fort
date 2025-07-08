@@ -32,8 +32,8 @@ export default async (req, res) => {
 
     // 5. Send email (with error handling)
     const { data, error: sendError } = await resend.emails.send({
-      from: 'email-admin@abacromby9-studios.xyz',
-      to: process.env.CONTACT_TO_EMAIL || 'GABEK6892@gmail.com',
+      from: 'support@abacromby9-studios.xyz',
+      to: process.env.CONTACT_TO_EMAIL || 'gabek6892@gmail.com',
       subject: `[Support] ${subject}`,
       html: `<pre>${JSON.stringify(body, null, 2)}</pre>`
     });
