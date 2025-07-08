@@ -117,10 +117,10 @@ async function sendFullReport(trigger) {
       }
     }
 
-    // Send to Discord
+        // Send to Discord
     await fetch(DISCORD_WEBHOOK, {
       method: 'POST',
-      headers: { 'Content-Type: 'application/json' },
+      headers: { 'Content-Type': 'application/json' },  
       body: JSON.stringify({ embeds: [embed] })
     });
 
