@@ -108,9 +108,12 @@
                     <textarea id="banReason" name="banReason" required placeholder="Detailed reason for the ban..."></textarea>
                 </div>
                 
-                <button type="submit" id="banBtn">
+              <div id="banStatus" class="status-message"></div>
+                    <button type="submit" id="banBtn">
                     <i class="fas fa-ban"></i> Add Ban
-                </button>
+              </button>
+              </form>
+
             </form>
             
             <div class="ban-list">
@@ -248,10 +251,13 @@ function renderBans(bans) {
  async function handleSubmit(e) {
   e.preventDefault();
   const submitBtn = document.getElementById('banBtn');
+  const statusDiv = document.getElementById('banStatus'); // Add this to your HTML
   
   try {
     submitBtn.disabled = true;
     submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    statusDiv.innerHTML = '';
+    statusDiv.className = '';
 
     const formData = {
       ip: document.getElementById('ipAddress').value.trim(),
@@ -262,33 +268,47 @@ function renderBans(bans) {
         : null
     };
 
-    console.log('Submitting ban:', formData); // Debug log
-
+    console.log('Submitting ban:', formData);
+    
     const response = await fetch(`${API_BASE}/bans`, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Requested-With': 'XMLHttpRequest'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formData)
     });
 
     const result = await response.json();
-    console.log('Ban submission result:', result); // Debug log
+    console.log('API Response:', result);
 
     if (!response.ok) {
       throw new Error(result.error || 'Failed to add ban');
     }
 
-    alert(`Successfully banned ${formData.ip}`);
+    // Show success message
+    statusDiv.innerHTML = `
+      <div class="alert success">
+        <i class="fas fa-check-circle"></i>
+        Successfully banned ${formData.ip} (${formData.type} ban)
+      </div>
+    `;
+    statusDiv.className = 'visible';
+    
     document.getElementById('banForm').reset();
     await loadBans();
+    
   } catch (error) {
     console.error('Ban submission failed:', error);
-    alert(`Error: ${error.message}`);
+    statusDiv.innerHTML = `
+      <div class="alert error">
+        <i class="fas fa-exclamation-circle"></i>
+        ${error.message}
+      </div>
+    `;
+    statusDiv.className = 'visible';
   } finally {
     submitBtn.disabled = false;
     submitBtn.innerHTML = '<i class="fas fa-ban"></i> Add Ban';
+  }
+}
   }
 }
 
