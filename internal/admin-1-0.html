@@ -158,16 +158,25 @@
         document.getElementById('banList').appendChild(errorElement);
     }
 
-    async function loadBans() {
+async function loadBans() {
   const banList = document.getElementById('banList');
   try {
     banList.innerHTML = '<div class="loading">Loading bans...</div>';
     
     const response = await fetch(`${API_BASE}/bans`);
-    const responseData = await response.json(); // Always parse as JSON first
+    
+    // First try to read as text to handle non-JSON responses
+    const responseText = await response.text();
+    let responseData;
+    
+    try {
+      responseData = JSON.parse(responseText);
+    } catch (e) {
+      throw new Error(`Invalid API response: ${responseText.substring(0, 100)}`);
+    }
     
     if (!response.ok) {
-      throw new Error(responseData.error || `Server returned ${response.status}`);
+      throw new Error(responseData.error || `Server error: ${response.status}`);
     }
     
     renderBans(responseData);
@@ -176,38 +185,45 @@
     banList.innerHTML = `
       <div class="error-alert">
         <i class="fas fa-exclamation-triangle"></i>
-        ${error.message || 'Failed to load bans'}
+        ${error.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
       </div>
     `;
   }
 }
 
-    // Render bans to UI
-    function renderBans(bans) {
-        const banList = document.getElementById('banList');
-        banList.innerHTML = '';
-        
-        if (bans.length === 0) {
-            banList.innerHTML = '<p>No active bans found.</p>';
-            return;
-        }
-        
-        bans.forEach(ban => {
-            const banItem = document.createElement('div');
-            banItem.className = `ban-item ${ban.type}-ban`;
-            banbanItem.innerHTML = `
-  <div>
-    <strong>${ban.ip}</strong>
-    ${ban.type === 'page' ? `(Page: ${ban.page})` : '(Full Site)'}
-  </div>
-  <div class="ban-actions">
-    <button onclick="removeBan('${ban.ip.replace(/'/g, "\\'")}')">
-      <i class="fas fa-trash"></i>
-    </button>
-  </div>
-`;
-
-            banList.appendChild(banItem);
+function renderBans(bans) {
+  const banList = document.getElementById('banList');
+  banList.innerHTML = '';
+  
+  if (!bans || !Array.isArray(bans)) {
+    banList.innerHTML = '<div class="error-alert">Invalid bans data received</div>';
+    return;
+  }
+  
+  if (bans.length === 0) {
+    banList.innerHTML = '<p>No active bans found.</p>';
+    return;
+  }
+  
+  bans.forEach(ban => {
+    const banItem = document.createElement('div');
+    banItem.className = `ban-item ${ban.type}-ban`;
+    banItem.innerHTML = `
+      <div>
+        <strong>${ban.ip}</strong>
+        ${ban.type === 'page' ? `(Page: ${ban.page})` : '(Full Site)'}
+        <br><small>Reason: ${ban.reason || 'No reason provided'}</small>
+        <br><small>Banned on: ${ban.timestamp ? new Date(ban.timestamp).toLocaleString() : 'Unknown date'}</small>
+      </div>
+      <div class="ban-actions">
+        <button onclick="removeBan('${ban.ip.replace(/'/g, "\\'")}')">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    `;
+    banList.appendChild(banItem);
+  });
+}
         });
     }
 
