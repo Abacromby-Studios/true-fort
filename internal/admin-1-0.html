@@ -152,77 +152,39 @@
             : 'none';
     }
 
-    // Load bans with proper error handling
-    async function loadBans() {
-        try {
-            banList.innerHTML = '<p>Loading bans...</p>';
-            const response = await fetch(`${API_BASE}/bans`);
-            
-            if (!response.ok) {
-                const error = await response.text();
-                throw new Error(`Server error: ${response.status} - ${error}`);
-            }
-            
-            const bans = await response.json();
-            renderBans(bans);
-        } catch (error) {
-            console.error('Load bans error:', error);
-            banList.innerHTML = `<p class="error">Error: ${error.message}</p>`;
-        }
+async function loadBans() {
+  try {
+    const response = await fetch(`${API_BASE}/bans`);
+    
+    if (!response.ok) {
+      // First try to read as JSON, fallback to text
+      let errorMsg;
+      try {
+        const errorData = await response.json();
+        errorMsg = errorData.error || `HTTP ${response.status}`;
+      } catch {
+        errorMsg = await response.text();
+      }
+      throw new Error(errorMsg);
     }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Load bans error:', error);
+    showError(`Failed to load bans: ${error.message}`);
+    throw error;
+  }
+}
 
-    // Render bans to the UI
-    function renderBans(bans) {
-        banList.innerHTML = bans.length === 0 
-            ? '<p>No active bans found.</p>'
-            : bans.map(ban => `
-                <div class="ban-item ${ban.type}-ban">
-                    <div>
-                        <strong>${ban.ip}</strong>
-                        ${ban.type === 'page' ? `(Page: ${ban.page})` : '(Full Site)'}
-                        <br><small>Reason: ${ban.reason}</small>
-                        <br><small>Banned on: ${new Date(ban.timestamp).toLocaleString()}</small>
-                    </div>
-                    <div class="ban-actions">
-                        <button onclick="removeBan('${ban.ip}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-    }
-
-    // Remove ban function
-    async function removeBan(ip) {
-        if (!confirm(`Remove ban for ${ip}?`)) return;
-        
-        try {
-            const response = await fetch(`${API_BASE}/bans?ip=${encodeURIComponent(ip)}`, {
-                method: 'DELETE'
-            });
-            
-            if (!response.ok) {
-                const error = await response.text();
-                throw new Error(error || 'Failed to remove ban');
-            }
-            
-            await loadBans();
-        } catch (error) {
-            console.error('Remove ban error:', error);
-            alert(`Error: ${error.message}`);
-        }
-    }
-
-    // Form submission
-    async function handleSubmit(e) {
-        e.preventDefault();
-        const submitBtn = banBtn;
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        
-        try {
-            const formData = {
-                ip: document.getElementById('ipAddress').value.trim(),
+function showError(message) {
+  const errorElement = document.createElement('div');
+  errorElement.className = 'error-message';
+  errorElement.innerHTML = `
+    <i class="fas fa-exclamation-circle"></i>
+    ${message}
+  `;
+  document.getElementById('banList').appendChild(errorElement);
+}
                 type: document.getElementById('banType').value,
                 reason: document.getElementById('banReason').value.trim(),
                 page: document.getElementById('banType').value === 'page' 
