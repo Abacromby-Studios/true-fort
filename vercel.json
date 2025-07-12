@@ -45,5 +45,5 @@
       "dest": "/$1",
       "continue": true
     }
-  ]
+  )
 }
