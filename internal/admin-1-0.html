@@ -167,24 +167,23 @@ async function loadBans() {
     banList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
     
     const response = await fetch(`${API_BASE}/bans`);
-    const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(data.error || `Server error: ${response.status}`);
+      throw new Error(`Server error: ${response.status}`);
     }
     
-    renderBans(data);
+    const bans = await response.json();
+    renderBans(bans);
   } catch (error) {
     console.error('Load bans failed:', error);
     banList.innerHTML = `
       <div class="error-alert">
         <i class="fas fa-exclamation-triangle"></i>
-        ${error.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+        ${error.message}
       </div>
     `;
   }
 }
-
 
 function renderBans(bans) {
   const banList = document.getElementById('banList');
@@ -239,6 +238,7 @@ function renderBans(bans) {
     showStatusMessage(`Error: ${error.message}`, 'error');
   }
 }
+
 
 
  async function handleSubmit(e) {
