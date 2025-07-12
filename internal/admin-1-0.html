@@ -168,18 +168,34 @@ async function loadBans() {
     
     const response = await fetch(`${API_BASE}/bans`);
     
+    // First check if the response is OK (status 200-299)
     if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
+      // Try to get error message from response body
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch (e) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      throw new Error(errorData.error || `Server error: ${response.status}`);
     }
     
+    // Parse the successful response
     const bans = await response.json();
+    
+    // Additional validation
+    if (!Array.isArray(bans)) {
+      throw new Error('Invalid data format received from server');
+    }
+    
     renderBans(bans);
   } catch (error) {
     console.error('Load bans failed:', error);
     banList.innerHTML = `
       <div class="error-alert">
         <i class="fas fa-exclamation-triangle"></i>
-        ${error.message}
+        Failed to load bans: ${error.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
+        <br><small>Check console for details</small>
       </div>
     `;
   }
