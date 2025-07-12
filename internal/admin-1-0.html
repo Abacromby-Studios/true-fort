@@ -134,41 +134,49 @@
         }
     }
 
-    // Fixed API base URL detection
+    // API configuration
     const API_BASE = window.location.hostname === 'localhost' 
         ? 'http://localhost:3000/api' 
         : '/api';
 
+    // DOM elements
+    const banForm = document.getElementById('banForm');
+    const banList = document.getElementById('banList');
+    const banBtn = document.getElementById('banBtn');
+
     // Initialize page ban visibility
     function initPageBanVisibility() {
-        const banType = document.getElementById('banType');
         const pageGroup = document.getElementById('pageGroup');
-        pageGroup.style.display = banType.value === 'page' ? 'block' : 'none';
+        pageGroup.style.display = document.getElementById('banType').value === 'page' 
+            ? 'block' 
+            : 'none';
     }
 
+    // Load bans with proper error handling
     async function loadBans() {
         try {
-            const banList = document.getElementById('banList');
             banList.innerHTML = '<p>Loading bans...</p>';
+            const response = await fetch(`${API_BASE}/bans`);
             
-            const res = await fetch(`${API_BASE}/bans`);
-            if (!res.ok) {
-                const errorData = await res.json().catch(() => ({}));
-                throw new Error(errorData.error || `Server returned ${res.status}`);
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(`Server error: ${response.status} - ${error}`);
             }
             
-            const bans = await res.json();
-            banList.innerHTML = '';
-            
-            if (bans.length === 0) {
-                banList.innerHTML = '<p>No active bans found.</p>';
-                return bans;
-            }
-            
-            bans.forEach(ban => {
-                const banItem = document.createElement('div');
-                banItem.className = `ban-item ${ban.type}-ban`;
-                banItem.innerHTML = `
+            const bans = await response.json();
+            renderBans(bans);
+        } catch (error) {
+            console.error('Load bans error:', error);
+            banList.innerHTML = `<p class="error">Error: ${error.message}</p>`;
+        }
+    }
+
+    // Render bans to the UI
+    function renderBans(bans) {
+        banList.innerHTML = bans.length === 0 
+            ? '<p>No active bans found.</p>'
+            : bans.map(ban => `
+                <div class="ban-item ${ban.type}-ban">
                     <div>
                         <strong>${ban.ip}</strong>
                         ${ban.type === 'page' ? `(Page: ${ban.page})` : '(Full Site)'}
@@ -176,23 +184,17 @@
                         <br><small>Banned on: ${new Date(ban.timestamp).toLocaleString()}</small>
                     </div>
                     <div class="ban-actions">
-                        <button onclick="removeBan('${ban.ip}')"><i class="fas fa-trash"></i></button>
+                        <button onclick="removeBan('${ban.ip}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
-                `;
-                banList.appendChild(banItem);
-            });
-            
-            return bans;
-        } catch (error) {
-            console.error('Failed to load bans:', error);
-            document.getElementById('banList').innerHTML = 
-                `<p class="error">Error loading bans: ${error.message}</p>`;
-            throw error;
-        }
+                </div>
+            `).join('');
     }
 
+    // Remove ban function
     async function removeBan(ip) {
-        if (!confirm(`Are you sure you want to remove the ban for ${ip}?`)) return;
+        if (!confirm(`Remove ban for ${ip}?`)) return;
         
         try {
             const response = await fetch(`${API_BASE}/bans?ip=${encodeURIComponent(ip)}`, {
@@ -200,69 +202,64 @@
             });
             
             if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to remove ban');
+                const error = await response.text();
+                throw new Error(error || 'Failed to remove ban');
             }
             
             await loadBans();
         } catch (error) {
-            console.error('Error removing ban:', error);
+            console.error('Remove ban error:', error);
             alert(`Error: ${error.message}`);
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Initialize visibility
-        initPageBanVisibility();
+    // Form submission
+    async function handleSubmit(e) {
+        e.preventDefault();
+        const submitBtn = banBtn;
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
         
-        // Set up change listener
-        document.getElementById('banType').addEventListener('change', function() {
-            document.getElementById('pageGroup').style.display = 
-                this.value === 'page' ? 'block' : 'none';
-        });
-        
-        // Load bans
-        loadBans();
-        
-        // Form submission
-        document.getElementById('banForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const submitBtn = document.getElementById('banBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            
-            try {
-                const formData = {
-                    ip: document.getElementById('ipAddress').value.trim(),
-                    type: document.getElementById('banType').value,
-                    reason: document.getElementById('banReason').value.trim(),
-                    page: document.getElementById('banType').value === 'page' 
-                        ? document.getElementById('pagePath').value.trim()
-                        : undefined
-                };
+        try {
+            const formData = {
+                ip: document.getElementById('ipAddress').value.trim(),
+                type: document.getElementById('banType').value,
+                reason: document.getElementById('banReason').value.trim(),
+                page: document.getElementById('banType').value === 'page' 
+                    ? document.getElementById('pagePath').value.trim()
+                    : undefined
+            };
 
-                const response = await fetch(`${API_BASE}/bans`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData)
-                });
+            const response = await fetch(`${API_BASE}/bans`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
 
-                if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.error || 'Failed to add ban');
-                }
-
-                document.getElementById('banForm').reset();
-                await loadBans();
-                alert('Ban added successfully!');
-            } catch (error) {
-                console.error('Error adding ban:', error);
-                alert(`Error: ${error.message}`);
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fas fa-ban"></i> Add Ban';
+            if (!response.ok) {
+                const error = await response.text();
+                throw new Error(error || 'Failed to add ban');
             }
-        });
+
+            const result = await response.json();
+            banForm.reset();
+            await loadBans();
+            alert(`Ban added for ${result.ip}`);
+        } catch (error) {
+            console.error('Submit error:', error);
+            alert(`Error: ${error.message}`);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '<i class="fas fa-ban"></i> Add Ban';
+        }
+    }
+
+    // Initialize everything
+    document.addEventListener('DOMContentLoaded', () => {
+        initPageBanVisibility();
+        document.getElementById('banType').addEventListener('change', initPageBanVisibility);
+        banForm.addEventListener('submit', handleSubmit);
+        loadBans();
     });
 </script>
 </body>
