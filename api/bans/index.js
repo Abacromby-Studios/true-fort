@@ -2,60 +2,88 @@
 import fs from 'fs';
 import path from 'path';
 
-const bansFilePath = path.join(process.cwd(), 'data', 'bans.json');
+// Ensure data directory exists
+const dataDir = path.join(process.cwd(), 'data');
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir);
+}
 
-// Ensure bans file exists
+const bansFilePath = path.join(dataDir, 'bans.json');
+
+// Initialize bans file if it doesn't exist
 if (!fs.existsSync(bansFilePath)) {
-    fs.writeFileSync(bansFilePath, JSON.stringify([], null, 2));
+    fs.writeFileSync(bansFilePath, '[]');
 }
 
 export default async function handler(req, res) {
-    if (req.method === 'GET') {
-        try {
-            const bansData = fs.readFileSync(bansFilePath, 'utf8');
-            const bans = JSON.parse(bansData);
-            res.status(200).json(bans);
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to read bans' });
+    try {
+        // Read bans from file
+        const readBans = () => {
+            const data = fs.readFileSync(bansFilePath, 'utf8');
+            return JSON.parse(data);
+        };
+
+        // Write bans to file
+        const writeBans = (bans) => {
+            fs.writeFileSync(bansFilePath, JSON.stringify(bans, null, 2));
+        };
+
+        if (req.method === 'GET') {
+            const bans = readBans();
+            return res.status(200).json(bans);
         }
-    } 
-    else if (req.method === 'POST') {
-        try {
-            const bansData = fs.readFileSync(bansFilePath, 'utf8');
-            const bans = JSON.parse(bansData);
+        else if (req.method === 'POST') {
+            const { ip, type, page, reason } = req.body;
             
+            if (!ip || !type || !reason) {
+                return res.status(400).json({ error: 'Missing required fields' });
+            }
+
+            const bans = readBans();
+            
+            // Check if ban already exists
+            if (bans.some(ban => ban.ip === ip)) {
+                return res.status(409).json({ error: 'IP already banned' });
+            }
+
             const newBan = {
-                ip: req.body.ip,
-                type: req.body.type,
-                page: req.body.page || null,
-                reason: req.body.reason,
+                ip,
+                type,
+                page: type === 'page' ? page : null,
+                reason,
                 timestamp: new Date().toISOString()
             };
-            
+
             bans.push(newBan);
-            fs.writeFileSync(bansFilePath, JSON.stringify(bans, null, 2));
-            
-            res.status(200).json({ success: true });
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to add ban' });
+            writeBans(bans);
+
+            return res.status(201).json(newBan);
         }
-    } 
-    else if (req.method === 'DELETE') {
-        try {
-            const ipToRemove = req.query.ip;
-            const bansData = fs.readFileSync(bansFilePath, 'utf8');
-            let bans = JSON.parse(bansData);
+        else if (req.method === 'DELETE') {
+            const { ip } = req.query;
             
-            bans = bans.filter(ban => ban.ip !== ipToRemove);
-            fs.writeFileSync(bansFilePath, JSON.stringify(bans, null, 2));
+            if (!ip) {
+                return res.status(400).json({ error: 'IP address required' });
+            }
+
+            let bans = readBans();
+            const initialLength = bans.length;
             
-            res.status(200).json({ success: true });
-        } catch (error) {
-            res.status(500).json({ error: 'Failed to remove ban' });
+            bans = bans.filter(ban => ban.ip !== ip);
+            
+            if (bans.length === initialLength) {
+                return res.status(404).json({ error: 'IP not found in bans' });
+            }
+
+            writeBans(bans);
+            return res.status(200).json({ success: true });
         }
-    } 
-    else {
-        res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
-        res.status(405).end(`Method ${req.method} Not Allowed`);
+        else {
+            res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+            return res.status(405).end(`Method ${req.method} Not Allowed`);
+        }
+    } catch (error) {
+        console.error('Bans API error:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
 }
