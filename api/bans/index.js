@@ -1,7 +1,8 @@
 import { promises as fs } from 'fs';
 import path from 'path';
 
-const dataDir = '/tmp/data';
+// Use a more persistent data directory
+const dataDir = path.join(process.cwd(), 'data');
 const bansFilePath = path.join(dataDir, 'bans.json');
 
 async function initStorage() {
@@ -25,46 +26,50 @@ export default async function handler(req, res) {
     await initStorage();
     let bans = JSON.parse(await fs.readFile(bansFilePath, 'utf8'));
 
-    if (req.method === 'POST') {
-      const { ip, type, page, reason } = req.body;
-      console.log('Ban data received:', { ip, type, page, reason });
+    switch (req.method) {
+      case 'GET':
+        return res.status(200).json(bans);
+        
+      case 'POST':
+        const { ip, type, page, reason } = req.body;
+        console.log('Ban data received:', { ip, type, page, reason });
 
-      // Validation
-      if (!ip || !type || !reason) {
-        return res.status(400).json({ 
-          error: 'Missing required fields',
-          received: req.body
-        });
-      }
+        if (!ip || !type || !reason) {
+          return res.status(400).json({ 
+            error: 'Missing required fields',
+            received: req.body
+          });
+        }
 
-      // Check for duplicates
-      if (bans.some(b => b.ip === ip)) {
-        return res.status(409).json({ error: 'IP already banned' });
-      }
+        if (bans.some(b => b.ip === ip)) {
+          return res.status(409).json({ error: 'IP already banned' });
+        }
 
-      const newBan = {
-        ip,
-        type,
-        page: type === 'page' ? page : null,
-        reason,
-        timestamp: new Date().toISOString()
-      };
+        const newBan = {
+          ip,
+          type,
+          page: type === 'page' ? page : null,
+          reason,
+          timestamp: new Date().toISOString()
+        };
 
-      bans.push(newBan);
-      await fs.writeFile(bansFilePath, JSON.stringify(bans, null, 2));
-      console.log('Ban successfully added:', newBan);
-      
-      return res.status(201).json({
-        success: true,
-        message: 'Ban added successfully',
-        ban: newBan
-      });
+        bans.push(newBan);
+        await fs.writeFile(bansFilePath, JSON.stringify(bans, null, 2));
+        return res.status(201).json(newBan);
+
+      case 'DELETE':
+        const ipToRemove = req.query.ip;
+        if (!ipToRemove) {
+          return res.status(400).json({ error: 'IP parameter missing' });
+        }
+
+        bans = bans.filter(ban => ban.ip !== ipToRemove);
+        await fs.writeFile(bansFilePath, JSON.stringify(bans, null, 2));
+        return res.status(200).json({ success: true });
+
+      default:
+        return res.status(405).json({ error: 'Method not allowed' });
     }
-
-    // ... other methods ...
-
-res.setHeader('Cache-Control', 'no-store');
-
   } catch (err) {
     console.error('API Error:', err);
     return res.status(500).json({ 
