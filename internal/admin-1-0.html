@@ -166,50 +166,48 @@ async function loadBans() {
   const statusDiv = document.getElementById('banStatus');
   
   try {
-    // Clear previous messages and show loading state
-    banList.innerHTML = '';
-    statusDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
-    
-    // Make the API request
+    // Show loading state
+    banList.innerHTML = '<div class="loading">Loading bans...</div>';
+    statusDiv.innerHTML = '';
+
+    // Make API request
     const response = await fetch(`${API_BASE}/bans`);
-    
-    // First check if the response is OK (status 200-299)
+
+    // Check for HTTP errors
     if (!response.ok) {
-      // Try to get error message from response body
-      let errorDetails = '';
-      try {
-        const errorData = await response.json();
-        errorDetails = errorData.error || JSON.stringify(errorData);
-      } catch (e) {
-        errorDetails = await response.text();
-      }
-      throw new Error(`Server responded with ${response.status}: ${errorDetails}`);
+      const errorText = await response.text();
+      throw new Error(`Server error: ${response.status} - ${errorText}`);
     }
-    
-    // Parse the successful response
+
+    // Parse response
     const bans = await response.json();
-    
-    // Validate the response data
+
+    // Validate response format
     if (!Array.isArray(bans)) {
-      throw new Error('Server returned invalid data format (expected array)');
+      throw new Error('Invalid data format received from server');
     }
-    
-    // Display the bans
+
+    // Display bans
     renderBans(bans);
-    statusDiv.innerHTML = ''; // Clear loading state
-    
+
   } catch (error) {
-    console.error('Failed to load bans:', error);
-    statusDiv.innerHTML = `
-      <div class="alert error">
-        <i class="fas fa-exclamation-circle"></i>
-        Failed to load bans: ${escapeHtml(error.message)}
+    console.error('Load bans error:', error);
+    banList.innerHTML = `
+      <div class="error-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        ${escapeHtml(error.message)}
       </div>
     `;
-    banList.innerHTML = '<p>Could not load ban list. Please try again.</p>';
   }
 }
 
+// Helper function to prevent XSS
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+    
 // Helper function to escape HTML
 function escapeHtml(unsafe) {
   if (!unsafe) return '';
