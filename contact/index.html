@@ -104,13 +104,14 @@
 
                 <div class="form-group">
                     <label for="subject">Support Subject:</label>
-                    <select id="subject" name="subject" required>
-                        <option value="">-- Select a subject --</option>
-                        <option value="player_report">Player Report</option>
-                        <option value="general_support">General Support</option>
-                        <option value="legal_inquiry">Legal Inquiry</option>
-                        <option value="appeal_request">Appeal Request</option>
-                    </select>
+                  <select id="subject" name="subject" required>
+                <option value="">-- Select a subject --</option>
+                <option value="player_report">Player Report</option>
+                <option value="general_support">General Support</option>
+                <option value="legal_inquiry">Legal Inquiry</option>
+                <option value="appeal_request">Appeal Request</option>
+                <option value="bug_support">Bug Support</option>
+                  </select>
                 </div>
 
                 <!-- Player Report Fields -->
@@ -162,9 +163,48 @@
                     <div class="form-group">
                         <label for="appeal_reason">Why should this be lifted?</label>
                         <textarea id="appeal_reason" name="appeal_reason" rows="5"></textarea>
+                    <div class="form-group">
+                     <label for="reviewer_notes">Do you have any notes for your reviewer?</label>
+                     <textarea id="reviewer_notes" name="reviewer_notes" rows="3"></textarea>
+                     </div>
                     </div>
-                </div>
-
+                 <!--  Bug Support fields -->
+<div id="bug_support_fields" class="subject-fields">
+    <div class="form-group">
+        <label for="bug_subject">Bug Subject:</label>
+        <input type="text" id="bug_subject" name="bug_subject" required>
+    </div>
+    <div class="form-group">
+        <label for="bug_description">Description:</label>
+        <textarea id="bug_description" name="bug_description" rows="5" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="bug_steps">Steps to Recreate:</label>
+        <textarea id="bug_steps" name="bug_steps" rows="3" required></textarea>
+    </div>
+    <div class="form-group">
+        <label for="bug_media">Image/Video Links (if applicable):</label>
+        <input type="url" id="bug_media" name="bug_media" placeholder="https://example.com/screenshot.jpg">
+    </div>
+    <div class="form-group">
+        <label for="bug_notes">Additional Notes:</label>
+        <textarea id="bug_notes" name="bug_notes" rows="2"></textarea>
+    </div>
+    <div class="form-group">
+        <label for="bug_type">Bug Type:</label>
+        <select id="bug_type" name="bug_type" required>
+            <option value="">-- Select type --</option>
+            <option value="web">Web-related Bug</option>
+            <option value="game">Game-related Bug</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <input type="checkbox" id="security_concern" name="security_concern">
+        <label for="security_concern" style="display: inline;">This is a security-related concern</label>
+    </div>
+</div>
+                     </div>
+               
                 <button type="submit" id="submitBtn">
                     <i class="fas fa-paper-plane"></i> Submit Request
                 </button>
