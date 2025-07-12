@@ -6,43 +6,35 @@ const bansFilePath = path.join(process.cwd(), 'data', 'bans.json');
 
 export default function ipBanMiddleware(req, res, next) {
     try {
-        // Read bans from JSON file
+        // Read current bans
         const bansData = fs.readFileSync(bansFilePath, 'utf8');
         const bans = JSON.parse(bansData);
         
-        const clientIP = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+        const clientIP = req.ip || 
+                       req.headers['x-forwarded-for']?.split(',')[0].trim() || 
+                       req.connection.remoteAddress;
         
-        // Check for full bans
-        const fullBan = bans.find(ban => 
-            ban.type === 'full' && (ban.ip === clientIP || ipMatchesCIDR(clientIP, ban.ip))
-        );
+        // Check for matching bans
+        const matchingBan = bans.find(ban => {
+            // Simple IP match (for now - consider adding CIDR support later)
+            if (ban.ip !== clientIP) return false;
+            
+            // For page bans, check if path matches
+            if (ban.type === 'page') {
+                return req.path.startsWith(ban.page);
+            }
+            
+            // Full bans match all paths
+            return true;
+        });
         
-        if (fullBan) {
-            return res.redirect(`/403.html?reason=${encodeURIComponent(fullBan.reason)}`);
-        }
-        
-        // Check for page-specific bans
-        const pageBan = bans.find(ban => 
-            ban.type === 'page' && 
-            (ban.ip === clientIP || ipMatchesCIDR(clientIP, ban.ip)) &&
-            req.path.startsWith(ban.page)
-        );
-        
-        if (pageBan) {
-            return res.redirect(`/403.html?reason=${encodeURIComponent(pageBan.reason)}`);
+        if (matchingBan) {
+            return res.redirect(`/403.html?reason=${encodeURIComponent(matchingBan.reason)}`);
         }
         
         next();
     } catch (error) {
-        console.error('IP ban middleware error:', error);
-        next();
+        console.error('IP ban check failed:', error);
+        next(); // Allow access if there's an error reading bans
     }
-}
-
-// Helper function for CIDR notation matching
-function ipMatchesCIDR(ip, cidr) {
-    // Implementation depends on your IP format
-    // You might want to use a library like ip-cidr
-    // For simplicity, we'll do exact match here
-    return ip === cidr;
 }
