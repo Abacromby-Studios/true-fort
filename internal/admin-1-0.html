@@ -123,7 +123,7 @@
     </main>
 
 <script>
-    // Password protection (keep your existing code)
+    // Password protection
     const password = "ADMIN1";
     if (!sessionStorage.getItem('adminAuthenticated')) {
         const enteredPassword = prompt("Enter admin password:");
@@ -134,11 +134,12 @@
         }
     }
 
-    const API_BASE = process.env.NODE_ENV === 'development' 
+    // Fixed API base URL detection
+    const API_BASE = window.location.hostname === 'localhost' 
         ? 'http://localhost:3000/api' 
         : '/api';
 
-    // Initialize page ban visibility on load
+    // Initialize page ban visibility
     function initPageBanVisibility() {
         const banType = document.getElementById('banType');
         const pageGroup = document.getElementById('pageGroup');
@@ -211,19 +212,19 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize visibility on page load
+        // Initialize visibility
         initPageBanVisibility();
         
-        // Set up change listener for ban type
+        // Set up change listener
         document.getElementById('banType').addEventListener('change', function() {
             document.getElementById('pageGroup').style.display = 
                 this.value === 'page' ? 'block' : 'none';
         });
         
-        // Load existing bans
+        // Load bans
         loadBans();
         
-        // Handle form submission
+        // Form submission
         document.getElementById('banForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('banBtn');
@@ -251,7 +252,6 @@
                     throw new Error(error.error || 'Failed to add ban');
                 }
 
-                // Clear form and reload bans
                 document.getElementById('banForm').reset();
                 await loadBans();
                 alert('Ban added successfully!');
@@ -264,5 +264,6 @@
             }
         });
     });
-</script></body>
+</script>
+</body>
 </html>
