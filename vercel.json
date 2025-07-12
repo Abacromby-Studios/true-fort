@@ -9,10 +9,6 @@
       "src": "**/*.html",
       "use": "@vercel/static"
     },
-        {
-      "src": "css/styles.css",
-      "use": "@vercel/node"
-    },
   ],
   "routes": [
     {
