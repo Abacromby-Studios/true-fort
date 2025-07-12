@@ -163,44 +163,68 @@
 
 async function loadBans() {
   const banList = document.getElementById('banList');
-  const statusDiv = document.getElementById('banStatus');
-  
   try {
-    // Show loading state
     banList.innerHTML = '<div class="loading">Loading bans...</div>';
-    statusDiv.innerHTML = '';
-
-    // Make API request
-    const response = await fetch(`${API_BASE}/bans`);
-
-    // Check for HTTP errors
+    
+    const response = await fetch('/api/bans');
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(`Server error: ${response.status} - ${errorText}`);
+      const error = await response.text();
+      throw new Error(error || 'Failed to load bans');
     }
-
-    // Parse response
+    
     const bans = await response.json();
-
-    // Validate response format
-    if (!Array.isArray(bans)) {
-      throw new Error('Invalid data format received from server');
+    banList.innerHTML = '';
+    
+    if (bans.length === 0) {
+      banList.innerHTML = '<p>No active bans</p>';
+      return;
     }
-
-    // Display bans
-    renderBans(bans);
-
+    
+    bans.forEach(ban => {
+      const banEl = document.createElement('div');
+      banEl.className = 'ban-item';
+      banEl.innerHTML = `
+        <div>
+          <strong>${ban.ip}</strong> (${ban.type})
+          <p>Reason: ${ban.reason}</p>
+          <small>${new Date(ban.timestamp).toLocaleString()}</small>
+        </div>
+        <button onclick="removeBan('${ban.ip}')">Remove</button>
+      `;
+      banList.appendChild(banEl);
+    });
+    
   } catch (error) {
-    console.error('Load bans error:', error);
     banList.innerHTML = `
-      <div class="error-alert">
-        <i class="fas fa-exclamation-triangle"></i>
-        ${escapeHtml(error.message)}
+      <div class="error">
+        Error loading bans: ${error.message}
       </div>
     `;
   }
 }
 
+async function removeBan(ip) {
+  if (!confirm(`Remove ban for ${ip}?`)) return;
+  
+  try {
+    const response = await fetch(`/api/bans?ip=${encodeURIComponent(ip)}`, {
+      method: 'DELETE'
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to remove ban');
+    }
+    
+    await loadBans();
+  } catch (error) {
+    alert(`Error: ${error.message}`);
+  }
+}
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  loadBans();
+});
 // Helper function to prevent XSS
 function escapeHtml(text) {
   const div = document.createElement('div');
