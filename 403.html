@@ -1,0 +1,79 @@
+<!-- /403.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ERROR 403(b) ACCESS DENIED</title>
+    <style>
+        @keyframes glow {
+            0% { box-shadow: 0 0 5px #FF0000; }
+            50% { box-shadow: 0 0 20px #FF0000; }
+            100% { box-shadow: 0 0 5px #FF0000; }
+        }
+        
+        body {
+            background-color: #000;
+            color: #FF0000;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .error-container {
+            border: 2px solid #FF0000;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 800px;
+            animation: glow 2s infinite;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+        
+        .reason {
+            font-style: italic;
+            padding: 15px;
+            background-color: rgba(255, 0, 0, 0.1);
+            border-left: 3px solid #FF0000;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <h1>ERROR 403(b) ACCESS DENIED</h1>
+        
+        <p>Hello,</p>
+        
+        <p>True-Fort Survival Minecraft Multiplayer And Factions is focused on maintaining a safe and secure environment for our community. We've found your account to be in violation of our Terms of Service or Community Guidelines. As a result, we've disabled your access to our website for the following reason:</p>
+        
+        <div class="reason" id="banReason">
+            <!-- Ban reason will be inserted here -->
+        </div>
+        
+        <p>If you believe this is a mistake, please contact our support team with details of your situation.</p>
+    </div>
+
+    <script>
+        // Get the ban reason from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const reason = urlParams.get('reason') || 'Violation of Terms of Service or Community Guidelines';
+        document.getElementById('banReason').textContent = reason;
+    </script>
+</body>
+</html>
