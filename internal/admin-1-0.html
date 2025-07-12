@@ -170,43 +170,26 @@ async function loadBans() {
     banList.innerHTML = '';
     statusDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
     
-    // Make the API request
     const response = await fetch(`${API_BASE}/bans`, {
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
-      cache: 'no-cache'
+      cache: 'no-store'
     });
 
-    // Handle non-OK responses
     if (!response.ok) {
-      let errorMessage = `Server error: ${response.status}`;
-      try {
-        const errorData = await response.json();
-        errorMessage = errorData.error || errorData.message || errorMessage;
-      } catch (e) {
-        // If JSON parsing fails, try to get text
-        try {
-          errorMessage = await response.text() || errorMessage;
-        } catch (e) {
-          // If text parsing also fails, keep the original message
-        }
-      }
-      throw new Error(errorMessage);
+      const errorText = await response.text();
+      throw new Error(errorText || `HTTP error! status: ${response.status}`);
     }
-
-    // Process successful response
+    
     const bans = await response.json();
     
     if (!Array.isArray(bans)) {
       throw new Error('Invalid data format received from server');
     }
 
-    // Display bans
     renderBans(bans);
     statusDiv.innerHTML = '';
-    
   } catch (error) {
     console.error('Failed to load bans:', error);
     statusDiv.innerHTML = `
@@ -219,6 +202,11 @@ async function loadBans() {
   }
 }
 
+function sanitizeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
 // Helper function to sanitize HTML
 function sanitizeHtml(text) {
   const div = document.createElement('div');
@@ -385,11 +373,25 @@ function renderBans(bans) {
 
 
     // Initialize everything when DOM loads
-    document.addEventListener('DOMContentLoaded', function() {
-        initPageBanVisibility();
-        document.getElementById('banType').addEventListener('change', initPageBanVisibility);
-        document.getElementById('banForm').addEventListener('submit', handleSubmit);
-        loadBans();
+// Replace your current DOMContentLoaded event listener with this:
+document.addEventListener('DOMContentLoaded', async function() {
+  try {
+    initPageBanVisibility();
+    document.getElementById('banType').addEventListener('change', initPageBanVisibility);
+    document.getElementById('banForm').addEventListener('submit', handleSubmit);
+    
+    // Load bans when page loads
+    await loadBans();
+  } catch (error) {
+    console.error('Initialization error:', error);
+    document.getElementById('banList').innerHTML = `
+      <div class="error-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        Initialization failed: ${error.message}
+      </div>
+    `;
+  }
+});
     });
 </script>
 </body>
