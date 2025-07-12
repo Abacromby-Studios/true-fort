@@ -18,17 +18,17 @@
     }
   ],
   "routes": [
-
     {
       "src": "/403",
       "dest": "/403.html",
       "headers": {
         "Cache-Control": "no-store, max-age=0"
+      }
     },
     {
       "src": "/api/check-ip",
       "dest": "/api/check-ip.js"
-    
+    },
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
@@ -45,5 +45,5 @@
       "dest": "/$1",
       "continue": true
     }
-  }
+  ]
 }
