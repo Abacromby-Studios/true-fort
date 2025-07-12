@@ -224,8 +224,6 @@ function renderBans(bans) {
     banList.appendChild(banItem);
   });
 }
-        });
-    }
 
     async function removeBan(ipAddress) { // Renamed parameter
   if (!confirm(`Are you sure you want to remove the ban for ${ipAddress}?`)) return;
