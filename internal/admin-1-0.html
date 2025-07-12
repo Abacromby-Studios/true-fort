@@ -164,25 +164,16 @@
 async function loadBans() {
   const banList = document.getElementById('banList');
   try {
-    banList.innerHTML = '<div class="loading">Loading bans...</div>';
+    banList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
     
     const response = await fetch(`${API_BASE}/bans`);
     
-    // First try to read as text to handle non-JSON responses
-    const responseText = await response.text();
-    let responseData;
-    
-    try {
-      responseData = JSON.parse(responseText);
-    } catch (e) {
-      throw new Error(`Invalid API response: ${responseText.substring(0, 100)}`);
-    }
-    
     if (!response.ok) {
-      throw new Error(responseData.error || `Server error: ${response.status}`);
+      throw new Error(`Server error: ${response.status}`);
     }
     
-    renderBans(responseData);
+    const bans = await response.json();
+    renderBans(bans);
   } catch (error) {
     console.error('Load bans failed:', error);
     banList.innerHTML = `
@@ -193,6 +184,7 @@ async function loadBans() {
     `;
   }
 }
+
 
 function renderBans(bans) {
   const banList = document.getElementById('banList');
@@ -228,7 +220,7 @@ function renderBans(bans) {
   });
 }
 
-    async function removeBan(ipAddress) { // Renamed parameter
+    async function removeBan(ipAddress) {
   if (!confirm(`Are you sure you want to remove the ban for ${ipAddress}?`)) return;
   
   try {
@@ -237,16 +229,17 @@ function renderBans(bans) {
     });
     
     if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.error || 'Failed to remove ban');
+      throw new Error('Failed to remove ban');
     }
     
     await loadBans();
+    showStatusMessage('Ban removed successfully', 'success');
   } catch (error) {
     console.error('Error removing ban:', error);
-    showError(`Error: ${error.message}`);
+    showStatusMessage(`Error: ${error.message}`, 'error');
   }
 }
+
 
  async function handleSubmit(e) {
   e.preventDefault();
