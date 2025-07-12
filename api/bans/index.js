@@ -1,39 +1,17 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-
-// Use a more persistent data directory
-const dataDir = path.join(process.cwd(), 'data');
-const bansFilePath = path.join(dataDir, 'bans.json');
-
-async function initStorage() {
-  try {
-    await fs.mkdir(dataDir, { recursive: true });
-    try {
-      await fs.access(bansFilePath);
-    } catch {
-      await fs.writeFile(bansFilePath, '[]');
-    }
-  } catch (err) {
-    console.error('Storage init error:', err);
-    throw err;
-  }
-}
+import { db } from '@vercel/postgres';
 
 export default async function handler(req, res) {
-  console.log(`Received ${req.method} request to ${req.url}`);
+  const client = await db.connect();
   
   try {
-    await initStorage();
-    let bans = JSON.parse(await fs.readFile(bansFilePath, 'utf8'));
-
     switch (req.method) {
       case 'GET':
-        return res.status(200).json(bans);
-        
+        const { rows } = await client.sql`SELECT * FROM bans ORDER BY timestamp DESC`;
+        return res.status(200).json(rows);
+
       case 'POST':
         const { ip, type, page, reason } = req.body;
-        console.log('Ban data received:', { ip, type, page, reason });
-
+        
         if (!ip || !type || !reason) {
           return res.status(400).json({ 
             error: 'Missing required fields',
@@ -41,21 +19,25 @@ export default async function handler(req, res) {
           });
         }
 
-        if (bans.some(b => b.ip === ip)) {
+        // Check for existing ban
+        const existing = await client.sql`
+          SELECT 1 FROM bans WHERE ip = ${ip}
+        `;
+        
+        if (existing.rows.length > 0) {
           return res.status(409).json({ error: 'IP already banned' });
         }
 
-        const newBan = {
-          ip,
-          type,
-          page: type === 'page' ? page : null,
-          reason,
+        // Insert new ban
+        await client.sql`
+          INSERT INTO bans (ip, type, page, reason)
+          VALUES (${ip}, ${type}, ${type === 'page' ? page : null}, ${reason})
+        `;
+        
+        return res.status(201).json({
+          ip, type, page, reason,
           timestamp: new Date().toISOString()
-        };
-
-        bans.push(newBan);
-        await fs.writeFile(bansFilePath, JSON.stringify(bans, null, 2));
-        return res.status(201).json(newBan);
+        });
 
       case 'DELETE':
         const ipToRemove = req.query.ip;
@@ -63,18 +45,22 @@ export default async function handler(req, res) {
           return res.status(400).json({ error: 'IP parameter missing' });
         }
 
-        bans = bans.filter(ban => ban.ip !== ipToRemove);
-        await fs.writeFile(bansFilePath, JSON.stringify(bans, null, 2));
+        await client.sql`
+          DELETE FROM bans WHERE ip = ${ipToRemove}
+        `;
+        
         return res.status(200).json({ success: true });
 
       default:
         return res.status(405).json({ error: 'Method not allowed' });
     }
   } catch (err) {
-    console.error('API Error:', err);
+    console.error('Database error:', err);
     return res.status(500).json({ 
       error: 'Internal Server Error',
-      details: process.env.NODE_ENV !== 'production' ? err.message : undefined
+      details: process.env.NODE_ENV === 'development' ? err.message : undefined
     });
+  } finally {
+    client.release();
   }
 }
