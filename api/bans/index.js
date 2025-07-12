@@ -7,54 +7,62 @@ const bansFilePath = path.join(dataDir, 'bans.json');
 async function initStorage() {
   try {
     await fs.mkdir(dataDir, { recursive: true });
-    await fs.writeFile(bansFilePath, '[]'); // Always overwrite if exists
+    try {
+      await fs.access(bansFilePath);
+    } catch {
+      await fs.writeFile(bansFilePath, '[]');
+    }
   } catch (err) {
-    console.error('Storage init failed:', err);
+    console.error('Storage init error:', err);
     throw err;
   }
 }
 
 export default async function handler(req, res) {
-  // Set Content-Type first
-  res.setHeader('Content-Type', 'application/json');
+  console.log(`Received ${req.method} request to ${req.url}`);
   
   try {
     await initStorage();
-    const bans = JSON.parse(await fs.readFile(bansFilePath, 'utf8'));
+    let bans = JSON.parse(await fs.readFile(bansFilePath, 'utf8'));
 
-    switch (req.method) {
-      case 'GET':
-        return res.status(200).json(bans);
+    if (req.method === 'POST') {
+      const { ip, type, page, reason } = req.body;
+      console.log('Ban data received:', { ip, type, page, reason });
 
-      case 'POST':
-        const { ip, type, page, reason } = req.body;
-        
-        if (!ip || !type || !reason) {
-          return res.status(400).json({ 
-            error: 'Missing required fields',
-            required: { ip: !ip, type: !type, reason: !reason }
-          });
-        }
+      // Validation
+      if (!ip || !type || !reason) {
+        return res.status(400).json({ 
+          error: 'Missing required fields',
+          received: req.body
+        });
+      }
 
-        if (bans.some(b => b.ip === ip)) {
-          return res.status(409).json({ error: 'IP already banned' });
-        }
+      // Check for duplicates
+      if (bans.some(b => b.ip === ip)) {
+        return res.status(409).json({ error: 'IP already banned' });
+      }
 
-        const newBan = {
-          ip,
-          type,
-          page: type === 'page' ? page : null,
-          reason,
-          timestamp: new Date().toISOString()
-        };
+      const newBan = {
+        ip,
+        type,
+        page: type === 'page' ? page : null,
+        reason,
+        timestamp: new Date().toISOString()
+      };
 
-        bans.push(newBan);
-        await fs.writeFile(bansFilePath, JSON.stringify(bans, null, 2));
-        return res.status(201).json(newBan);
-
-      default:
-        return res.status(405).json({ error: 'Method not allowed' });
+      bans.push(newBan);
+      await fs.writeFile(bansFilePath, JSON.stringify(bans, null, 2));
+      console.log('Ban successfully added:', newBan);
+      
+      return res.status(201).json({
+        success: true,
+        message: 'Ban added successfully',
+        ban: newBan
+      });
     }
+
+    // ... other methods ...
+
   } catch (err) {
     console.error('API Error:', err);
     return res.status(500).json({ 
