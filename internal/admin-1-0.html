@@ -158,26 +158,29 @@
         document.getElementById('banList').appendChild(errorElement);
     }
 
-    // Load bans function
     async function loadBans() {
-        try {
-            const banList = document.getElementById('banList');
-            banList.innerHTML = '<p>Loading bans...</p>';
-            
-            const response = await fetch(`${API_BASE}/bans`);
-            
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.error || `Server returned ${response.status}`);
-            }
-            
-            const bans = await response.json();
-            renderBans(bans);
-        } catch (error) {
-            console.error('Failed to load bans:', error);
-            showError(`Error loading bans: ${error.message}`);
-        }
+  const banList = document.getElementById('banList');
+  try {
+    banList.innerHTML = '<div class="loading">Loading bans...</div>';
+    
+    const response = await fetch(`${API_BASE}/bans`);
+    const responseData = await response.json(); // Always parse as JSON first
+    
+    if (!response.ok) {
+      throw new Error(responseData.error || `Server returned ${response.status}`);
     }
+    
+    renderBans(responseData);
+  } catch (error) {
+    console.error('Load bans failed:', error);
+    banList.innerHTML = `
+      <div class="error-alert">
+        <i class="fas fa-exclamation-triangle"></i>
+        ${error.message || 'Failed to load bans'}
+      </div>
+    `;
+  }
+}
 
     // Render bans to UI
     function renderBans(bans) {
