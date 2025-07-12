@@ -167,13 +167,13 @@ async function loadBans() {
     banList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
     
     const response = await fetch(`${API_BASE}/bans`);
+    const data = await response.json();
     
     if (!response.ok) {
-      throw new Error(`Server error: ${response.status}`);
+      throw new Error(data.error || `Server error: ${response.status}`);
     }
     
-    const bans = await response.json();
-    renderBans(bans);
+    renderBans(data);
   } catch (error) {
     console.error('Load bans failed:', error);
     banList.innerHTML = `
