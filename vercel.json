@@ -2,14 +2,25 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/bans/*.js",
+      "src": "*.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "api/**/*.js",
       "use": "@vercel/node"
     }
   ],
   "routes": [
     {
-      "src": "/api/bans/(.*)",
-      "dest": "/api/bans/index.js"
+      "src": "/api/(.*)",
+      "dest": "api/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1",
+      "headers": {
+        "Cache-Control": "public, max-age=3600"
+      }
     }
   ]
 }
