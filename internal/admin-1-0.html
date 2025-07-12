@@ -164,38 +164,60 @@
 async function loadBans() {
   const banList = document.getElementById('banList');
   try {
+    // Clear previous errors and show loading state
     banList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
     
-    const response = await fetch(`${API_BASE}/bans`);
+    // Debug: Log the API endpoint being called
+    console.log(`Fetching bans from: ${API_BASE}/bans`);
     
+    const response = await fetch(`${API_BASE}/bans`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store' // Prevent caching issues
+    });
+
+    // Debug: Log the raw response
+    console.log('Raw response:', response);
+
     // First check if the response is OK (status 200-299)
     if (!response.ok) {
       // Try to get error message from response body
-      let errorData;
+      let errorDetails = '';
       try {
-        errorData = await response.json();
+        const errorData = await response.json();
+        errorDetails = errorData.error || JSON.stringify(errorData);
       } catch (e) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        errorDetails = await response.text();
       }
-      throw new Error(errorData.error || `Server error: ${response.status}`);
+      throw new Error(`Server responded with ${response.status}: ${errorDetails}`);
     }
     
     // Parse the successful response
     const bans = await response.json();
     
+    // Debug: Log the parsed data
+    console.log('Parsed bans:', bans);
+
     // Additional validation
     if (!Array.isArray(bans)) {
-      throw new Error('Invalid data format received from server');
+      throw new Error('Server returned invalid data format (expected array)');
     }
     
     renderBans(bans);
   } catch (error) {
-    console.error('Load bans failed:', error);
+    console.error('Failed to load bans:', error);
     banList.innerHTML = `
       <div class="error-alert">
         <i class="fas fa-exclamation-triangle"></i>
-        Failed to load bans: ${error.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-        <br><small>Check console for details</small>
+        <strong>Failed to load bans</strong>
+        <div>${error.message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+        ${process.env.NODE_ENV === 'development' ? `
+          <details style="margin-top: 10px; font-size: 12px;">
+            <summary>Technical details</summary>
+            <pre>${error.stack.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+          </details>
+        ` : ''}
       </div>
     `;
   }
