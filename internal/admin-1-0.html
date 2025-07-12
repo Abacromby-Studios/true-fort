@@ -170,43 +170,58 @@ async function loadBans() {
     banList.innerHTML = '';
     statusDiv.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
     
-    const response = await fetch(`${API_BASE}/bans`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      cache: 'no-store'
-    });
-
+    // Make the API request
+    const response = await fetch(`${API_BASE}/bans`);
+    
+    // First check if the response is OK (status 200-299)
     if (!response.ok) {
-      const errorText = await response.text();
-      throw new Error(errorText || `HTTP error! status: ${response.status}`);
+      // Try to get error message from response body
+      let errorDetails = '';
+      try {
+        const errorData = await response.json();
+        errorDetails = errorData.error || JSON.stringify(errorData);
+      } catch (e) {
+        errorDetails = await response.text();
+      }
+      throw new Error(`Server responded with ${response.status}: ${errorDetails}`);
     }
     
+    // Parse the successful response
     const bans = await response.json();
     
+    // Validate the response data
     if (!Array.isArray(bans)) {
-      throw new Error('Invalid data format received from server');
+      throw new Error('Server returned invalid data format (expected array)');
     }
-
+    
+    // Display the bans
     renderBans(bans);
-    statusDiv.innerHTML = '';
+    statusDiv.innerHTML = ''; // Clear loading state
+    
   } catch (error) {
     console.error('Failed to load bans:', error);
     statusDiv.innerHTML = `
       <div class="alert error">
         <i class="fas fa-exclamation-circle"></i>
-        Failed to load bans: ${sanitizeHtml(error.message)}
+        Failed to load bans: ${escapeHtml(error.message)}
       </div>
     `;
     banList.innerHTML = '<p>Could not load ban list. Please try again.</p>';
   }
 }
 
-function sanitizeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+// Helper function to escape HTML
+function escapeHtml(unsafe) {
+  if (!unsafe) return '';
+  return unsafe.toString()
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
+
+
 // Helper function to sanitize HTML
 function sanitizeHtml(text) {
   const div = document.createElement('div');
