@@ -63,6 +63,8 @@ export default async function handler(req, res) {
 
     // ... other methods ...
 
+res.setHeader('Cache-Control', 'no-store');
+
   } catch (err) {
     console.error('API Error:', err);
     return res.status(500).json({ 
