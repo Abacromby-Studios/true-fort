@@ -122,9 +122,9 @@
         </div>
     </main>
 
-   <script>
-    // Password protection
-    const password = "ADMIN1"; // Change this to a secure password
+<script>
+    // Password protection (keep your existing code)
+    const password = "ADMIN1";
     if (!sessionStorage.getItem('adminAuthenticated')) {
         const enteredPassword = prompt("Enter admin password:");
         if (enteredPassword !== password) {
@@ -137,6 +137,13 @@
     const API_BASE = process.env.NODE_ENV === 'development' 
         ? 'http://localhost:3000/api' 
         : '/api';
+
+    // Initialize page ban visibility on load
+    function initPageBanVisibility() {
+        const banType = document.getElementById('banType');
+        const pageGroup = document.getElementById('pageGroup');
+        pageGroup.style.display = banType.value === 'page' ? 'block' : 'none';
+    }
 
     async function loadBans() {
         try {
@@ -204,7 +211,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', function() {
-        // Toggle page path field
+        // Initialize visibility on page load
+        initPageBanVisibility();
+        
+        // Set up change listener for ban type
         document.getElementById('banType').addEventListener('change', function() {
             document.getElementById('pageGroup').style.display = 
                 this.value === 'page' ? 'block' : 'none';
@@ -254,6 +264,5 @@
             }
         });
     });
-</script>
-</body>
+</script></body>
 </html>
