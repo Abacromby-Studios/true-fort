@@ -1,39 +1,29 @@
-import { promises as fs } from 'fs';
-import path from 'path';
-
-const dataDir = path.join(process.cwd(), 'data');
-const bansFilePath = path.join(dataDir, 'bans.json');
+import { db } from '@vercel/postgres';
 
 export default async function handler(req, res) {
-  try {
-    // Skip checking for static files and the 403 page
-    if (req.url.startsWith('/_next/') || req.url === '/403.html') {
-      return res.status(200).end();
-    }
+  // Skip checking for static files and the 403 page
+  if (req.url.startsWith('/_next/') || req.url === '/403.html') {
+    return res.status(200).end();
+  }
 
+  const client = await db.connect();
+  
+  try {
     // Get client IP
     const clientIP = req.headers['x-forwarded-for']?.split(',')[0]?.trim() || 
                    req.socket?.remoteAddress || 
                    req.connection?.remoteAddress;
 
-    // Read current bans
-    let bans = [];
-    try {
-      bans = JSON.parse(await fs.readFile(bansFilePath, 'utf8'));
-    } catch (err) {
-      console.error('Error reading bans file:', err);
-      return res.status(200).end(); // Allow access if we can't read bans
-    }
+    // Check for bans
+    const { rows } = await client.sql`
+      SELECT type, page FROM bans WHERE ip = ${clientIP}
+    `;
 
-    // Check if IP is banned
-    const isBanned = bans.some(ban => {
-      if (ban.ip === clientIP) {
-        if (ban.type === 'page') {
-          return req.url.startsWith(ban.page);
-        }
-        return true; // Full site ban
+    const isBanned = rows.some(ban => {
+      if (ban.type === 'page') {
+        return req.url.startsWith(ban.page);
       }
-      return false;
+      return true; // Full site ban
     });
 
     if (isBanned) {
@@ -41,11 +31,11 @@ export default async function handler(req, res) {
       return res.redirect(307, '/403.html');
     }
 
-    // Not banned - continue
     return res.status(200).end();
-
   } catch (err) {
     console.error('Ban check error:', err);
     return res.status(200).end(); // Allow access if error occurs
+  } finally {
+    client.release();
   }
 }
