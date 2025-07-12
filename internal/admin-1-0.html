@@ -192,43 +192,41 @@
         bans.forEach(ban => {
             const banItem = document.createElement('div');
             banItem.className = `ban-item ${ban.type}-ban`;
-            banItem.innerHTML = `
-                <div>
-                    <strong>${ban.ip}</strong>
-                    ${ban.type === 'page' ? `(Page: ${ban.page})` : '(Full Site)'}
-                    <br><small>Reason: ${ban.reason}</small>
-                    <br><small>Banned on: ${new Date(ban.timestamp).toLocaleString()}</small>
-                </div>
-                <div class="ban-actions">
-                    <button onclick="removeBan('${ban.ip}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            `;
+            banbanItem.innerHTML = `
+  <div>
+    <strong>${ban.ip}</strong>
+    ${ban.type === 'page' ? `(Page: ${ban.page})` : '(Full Site)'}
+  </div>
+  <div class="ban-actions">
+    <button onclick="removeBan('${ban.ip.replace(/'/g, "\\'")}')">
+      <i class="fas fa-trash"></i>
+    </button>
+  </div>
+`;
+
             banList.appendChild(banItem);
         });
     }
 
-    // Remove ban function
-    async function removeBan(ip) {
-        if (!confirm(`Are you sure you want to remove the ban for ${ip}?`)) return;
-        
-        try {
-            const response = await fetch(`${API_BASE}/bans?ip=${encodeURIComponent(ip)}`, {
-                method: 'DELETE'
-            });
-            
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.error || 'Failed to remove ban');
-            }
-            
-            await loadBans();
-        } catch (error) {
-            console.error('Error removing ban:', error);
-            showError(`Error: ${error.message}`);
-        }
+    async function removeBan(ipAddress) { // Renamed parameter
+  if (!confirm(`Are you sure you want to remove the ban for ${ipAddress}?`)) return;
+  
+  try {
+    const response = await fetch(`${API_BASE}/bans?ip=${encodeURIComponent(ipAddress)}`, {
+      method: 'DELETE'
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to remove ban');
     }
+    
+    await loadBans();
+  } catch (error) {
+    console.error('Error removing ban:', error);
+    showError(`Error: ${error.message}`);
+  }
+}
 
     // Form submission handler
     async function handleSubmit(e) {
