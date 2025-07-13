@@ -225,6 +225,12 @@ async function removeBan(ip) {
 document.addEventListener('DOMContentLoaded', () => {
   loadBans();
 });
+
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', () => {
+  loadBans();
+});
 // Helper function to prevent XSS
 function escapeHtml(text) {
   const div = document.createElement('div');
