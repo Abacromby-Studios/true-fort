@@ -222,7 +222,7 @@ async function loadBans() {
 
         renderBans(bans);
         
-    } catch (error) {
+    catch (error) {
         console.error('Load bans failed:', error);
         banList.innerHTML = `
             <div class="error-alert">
