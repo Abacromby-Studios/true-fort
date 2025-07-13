@@ -190,31 +190,27 @@ async function loadBans() {
   try {
     banList.innerHTML = '<div class="loading">Loading bans...</div>';
     
-    // Use the EXACT same Supabase client setup as your test link
-    const supabase = createClient(
-      'https://nzodhplysyylysxtbbel.supabase.co',  // Your Supabase URL
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56b2RocGx5c3l5bHlzeHRiYmVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzODc3MzMsImV4cCI6MjA2Nzk2MzczM30.6KwISZthNoyh19csNVK3v0_OWmhbUDZTfKq685Bqnzw'   // Your anon/public key
-    );
-
-    // Fetch bans (identical to your working API link)
+    // Fetch data from Supabase
     const { data, error } = await supabase
       .from('bans')
       .select('*');
 
-    if (error) throw new Error(`Supabase error: ${error.message}`);
-    
-    // Render bans if data exists
+    if (error) throw error;
+
     if (data && data.length > 0) {
       renderBans(data);
     } else {
       banList.innerHTML = '<p>No bans found.</p>';
     }
+
   } catch (error) {
     console.error("Failed to load bans:", error);
     banList.innerHTML = `
       <div class="error-alert">
-        Failed to load bans: ${error.message}
-        <button onclick="loadBans()">Retry</button>
+        <i class="fas fa-exclamation-triangle"></i>
+        Failed to load bans: ${escapeHtml(error.message)}
+        <br><small>Request ID: ${error.requestId || 'unknown'}</small>
+        <br><button onclick="loadBans()">Retry</button>
       </div>
     `;
   }
