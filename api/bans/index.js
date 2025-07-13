@@ -1,4 +1,5 @@
 // api/bans/index.js
+// api/bans/index.js
 import { db } from '@vercel/postgres';
 
 export default async function handler(req, res) {
