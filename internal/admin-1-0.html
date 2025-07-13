@@ -192,41 +192,43 @@ async function loadBans() {
         banList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
         statusDiv.innerHTML = '';
         
+        // Add debug logging
+        console.log(`Fetching bans from: ${API_BASE}/bans`);
+        
         const response = await fetch(`${API_BASE}/bans`);
         
-        // First check if the response is empty
+        // Debug: Log raw response
         const responseText = await response.text();
-        if (!responseText) {
+        console.log('Raw server response:', responseText);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        // Check for empty response
+        if (!responseText.trim()) {
             throw new Error('Server returned empty response');
         }
-        
-        // Try to parse JSON
+
+        // Parse JSON with better error context
         let bans;
         try {
             bans = JSON.parse(responseText);
         } catch (parseError) {
-            console.error('Failed to parse JSON:', responseText);
-            throw new Error('Server returned invalid data. Please check the server logs.');
+            console.error('JSON parse error:', parseError);
+            throw new Error(`Invalid JSON from server. Received: ${responseText.substring(0, 100)}...`);
         }
-        
-        if (!response.ok) {
-            // If the response has a proper error structure
-            if (bans && bans.error) {
-                throw new Error(bans.error);
-            }
-            // If it's a standard HTTP error
-            throw new Error(`Server error: ${response.status} ${response.statusText}`);
-        }
-        
+
+        // Validate bans structure
         if (!Array.isArray(bans)) {
-            // Handle case where server returns a single ban object instead of array
+            console.warn('Bans data is not an array:', bans);
             if (bans && typeof bans === 'object') {
-                bans = [bans];
+                bans = [bans]; // Convert single ban to array
             } else {
                 throw new Error('Expected array of bans');
             }
         }
-        
+
         renderBans(bans);
         
     } catch (error) {
@@ -235,15 +237,8 @@ async function loadBans() {
             <div class="error-alert">
                 <i class="fas fa-exclamation-triangle"></i>
                 Failed to load bans: ${escapeHtml(error.message)}
-                <br><small>Request ID: iad1::8jvfq-1752386755251-0c539fadabf4</small>
-            </div>
-        `;
-        
-        // Also show the error in the status div for better visibility
-        statusDiv.innerHTML = `
-            <div class="alert error">
-                <i class="fas fa-exclamation-circle"></i>
-                ${escapeHtml(error.message)}
+                <br><small>Request ID: ${error.requestId || 'unknown'}</small>
+                <br><button onclick="location.reload()">Retry</button>
             </div>
         `;
     }
