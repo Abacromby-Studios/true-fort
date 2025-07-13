@@ -193,7 +193,12 @@ async function loadBans() {
         statusDiv.innerHTML = '';
         
         const response = await fetch(`${API_BASE}/bans`);
+        
+        // First check if the response is empty
         const responseText = await response.text();
+        if (!responseText) {
+            throw new Error('Server returned empty response');
+        }
         
         // Try to parse JSON
         let bans;
@@ -201,15 +206,25 @@ async function loadBans() {
             bans = JSON.parse(responseText);
         } catch (parseError) {
             console.error('Failed to parse JSON:', responseText);
-            throw new Error('Server returned invalid data');
+            throw new Error('Server returned invalid data. Please check the server logs.');
         }
         
         if (!response.ok) {
-            throw new Error(bans.error || `Server error: ${response.status}`);
+            // If the response has a proper error structure
+            if (bans && bans.error) {
+                throw new Error(bans.error);
+            }
+            // If it's a standard HTTP error
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
         }
         
         if (!Array.isArray(bans)) {
-            throw new Error('Expected array of bans');
+            // Handle case where server returns a single ban object instead of array
+            if (bans && typeof bans === 'object') {
+                bans = [bans];
+            } else {
+                throw new Error('Expected array of bans');
+            }
         }
         
         renderBans(bans);
@@ -219,12 +234,20 @@ async function loadBans() {
         banList.innerHTML = `
             <div class="error-alert">
                 <i class="fas fa-exclamation-triangle"></i>
+                Failed to load bans: ${escapeHtml(error.message)}
+                <br><small>Request ID: iad1::8jvfq-1752386755251-0c539fadabf4</small>
+            </div>
+        `;
+        
+        // Also show the error in the status div for better visibility
+        statusDiv.innerHTML = `
+            <div class="alert error">
+                <i class="fas fa-exclamation-circle"></i>
                 ${escapeHtml(error.message)}
             </div>
         `;
     }
 }
-
 // Render bans list
 function renderBans(bans) {
     const banList = document.getElementById('banList');
