@@ -185,49 +185,40 @@ function initPageBanVisibility() {
 
 // Load bans from API with proper error handling
 async function loadBans() {
-    const banList = document.getElementById('banList');
-    const statusDiv = document.getElementById('banStatus');
+  const banList = document.getElementById('banList');
+  
+  try {
+    banList.innerHTML = '<div class="loading">Loading bans...</div>';
     
-    try {
-        banList.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading bans...</div>';
-        statusDiv.innerHTML = '';
-        
-        // Add debug logging
-        console.log(`Fetching bans from: ${API_BASE}/bans`);
-        
-        const response = await fetch(`${API_BASE}/bans`);
-        
-        // Debug: Log raw response
-        const responseText = await response.text();
-        console.log('Raw server response:', responseText);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+    // Use the EXACT same Supabase client setup as your test link
+    const supabase = createClient(
+      'https://nzodhplysyylysxtbbel.supabase.co',  // Your Supabase URL
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56b2RocGx5c3l5bHlzeHRiYmVsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTIzODc3MzMsImV4cCI6MjA2Nzk2MzczM30.6KwISZthNoyh19csNVK3v0_OWmhbUDZTfKq685Bqnzw'   // Your anon/public key
+    );
 
-        // Check for empty response
-        if (!responseText.trim()) {
-            throw new Error('Server returned empty response');
-        }
+    // Fetch bans (identical to your working API link)
+    const { data, error } = await supabase
+      .from('bans')
+      .select('*');
 
-        // Parse JSON with better error context
-        let bans;
-        try {
-            bans = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error('JSON parse error:', parseError);
-            throw new Error(`Invalid JSON from server. Received: ${responseText.substring(0, 100)}...`);
-        }
-
-        // Validate bans structure
-        if (!Array.isArray(bans)) {
-            console.warn('Bans data is not an array:', bans);
-            if (bans && typeof bans === 'object') {
-                bans = [bans]; // Convert single ban to array
-            } else {
-                throw new Error('Expected array of bans');
-            }
-        }
+    if (error) throw new Error(`Supabase error: ${error.message}`);
+    
+    // Render bans if data exists
+    if (data && data.length > 0) {
+      renderBans(data);
+    } else {
+      banList.innerHTML = '<p>No bans found.</p>';
+    }
+  } catch (error) {
+    console.error("Failed to load bans:", error);
+    banList.innerHTML = `
+      <div class="error-alert">
+        Failed to load bans: ${error.message}
+        <button onclick="loadBans()">Retry</button>
+      </div>
+    `;
+  }
+}
 
         renderBans(bans);
         
